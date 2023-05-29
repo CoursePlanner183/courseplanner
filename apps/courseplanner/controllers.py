@@ -52,7 +52,6 @@ def get_courses():
     print(courses)
     return dict(courses=courses)
 
- 
 @action('user/profile')
 @action.uses('user.html', db, auth.user, url_signer)
 def profile():
@@ -71,7 +70,6 @@ def profile():
 def create_course():
     form = Form(db.course,deletable=False, formstyle=FormStyleBulma)
     if form.accepted:
-        x = db.course.insert(name=form.vars["name"],number=form.vars["number"],credits=form.vars["credits"])
         redirect(URL("index"))
     return dict(form=form)
 
