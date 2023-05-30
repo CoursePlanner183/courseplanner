@@ -78,7 +78,7 @@
             <div class="level-right">
               <label class="checkbox">
                 <input type="checkbox"  v-model="selectedCourses" :id="course.name" :value="course.id">
-                {{course.name}}
+                  {{course.name}}
               </label>
             </div>
           </div>
@@ -95,6 +95,35 @@
             </span>
             <span>Create Course</span>
           </a>
+          
+          <a class="button is-warning" @click="deleteMode=!deleteMode">
+            <span class="icon">
+              <i class="fa fa-exclamation-triangle"></i>
+            </span>
+            <span>Delete Courses</span>
+          </a>
+          <div v-if="deleteMode">
+            <div class="field has-addons" v-for="course in courses">
+              <div class="field has-addons" v-for="ct in courses_taken">
+                <div v-if="ct.course_id==course.id">
+                  <div class="level-right">
+                    <label class="checkbox">
+                      <input type="checkbox"  v-model="selectedDelete" :id="course.name" :value="course.id">
+                        {{course.name}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="button is-danger" @click="deleteMode=!deleteMode; deleteCourses()">
+              <span class="icon">
+                <i class="fa fa-times-circle"></i>
+              </span>
+              <span>Delete Selected Courses</span>
+            </a>
+          </div>
+
+
       </section>
 
     </div>
@@ -108,6 +137,7 @@
 <!-- Loads the index-specific js for Vue -->
 <script>
   let add_course_url = "[[=XML(add_course_url)]]";
+  let delete_course_url = "[[=XML(delete_course_url)]]";
 </script>
 <script src="js/index.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>

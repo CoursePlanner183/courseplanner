@@ -15,6 +15,8 @@ let init = (app) => {
         courses: [],
         courses_taken: [],
         selectedCourses: [],
+        deleteMode: false,
+        selectedDelete: [],
     };
 
     app.enumerate = (a) => {
@@ -31,8 +33,15 @@ let init = (app) => {
             app.vue.selectedCourses = [];
             location.reload();
         })
-        
     };
+
+    app.deleteCourses = async function () {
+        axios.post(delete_course_url, {courses_delete: app.vue.selectedDelete}).then(function(response) {
+            app.vue.selectedDelete = [];
+            location.reload();
+        })
+    };
+
 
     //  Checks if there are courses to add to planner. If there are, then adds courses and years.
     app.updatePlanner = function () {
@@ -104,6 +113,7 @@ let init = (app) => {
         // Complete as you see fit.
         addcourses: app.addcourses,
         updatePlanner: app.updatePlanner,
+        deleteCourses: app.deleteCourses,
     };
 
 

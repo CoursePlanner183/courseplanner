@@ -46,6 +46,7 @@ def index():
     return dict(
         courses=courses,
         add_course_url = URL('add_courses', signer=url_signer),
+        delete_course_url = URL('delete_courses', signer=url_signer)
         )
 
 @action('get_courses')
@@ -95,6 +96,13 @@ def add_courses():
         )
     return "ok"
 
+@action("delete_courses", method="POST")
+@action.uses(db, auth.user)
+def delete_courses():
+    courses_delete = request.json.get('courses_delete')
+    for courseId in courses_delete:
+        db(db.course_taken.course_id == courseId).delete()
+    return "ok"
 
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
