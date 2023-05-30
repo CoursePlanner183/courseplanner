@@ -43,15 +43,22 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
-    return dict(courses=courses)
+    return dict(
+        courses=courses,
+        add_course_url = URL('add_courses', signer=url_signer),
+        )
 
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():
     courses = db(db.course).select().as_list()
-    print(courses)
-    return dict(courses=courses)
+    courses_taken = db(db.course_taken).select().as_list()
+    return dict(
+        courses=courses,
+        courses_taken=courses_taken,
+        )
 
+ 
 @action('user/profile')
 @action.uses('user.html', db, auth.user, url_signer)
 def profile():
@@ -62,7 +69,6 @@ def profile():
     Fields.append(Field('grad_date', type='date'))
     Fields.append(Field('School', type='string',requires=IS_IN_SET(csu_schools + uc_schools)))
     form = Form(Fields,deletable=False, formstyle=FormStyleBulma)
-
     return dict(form=form)
 
 @action('course/create', method=["GET", "POST"])
@@ -74,19 +80,21 @@ def create_course():
     return dict(form=form)
 
 
-@action("course/add", method="POST")
-@action.uses(db, auth.user, url_signer.verify())
+@action("add_courses", method="POST")
+@action.uses(db, auth.user)
 def add_courses():
-    courses = request.json.get('courses_selected')
-    user = auth.get_user()
-    assert user is not None and courses is not None
-    for courseId in courses:
+    courses_selected = request.json.get('courses_selected')
+    assert courses_selected is not None
+    for courseId in courses_selected:
+        if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
+            return "Course is already taken"
+
         db.course_taken.insert(
-            user_id=user['id'],
             course_id=courseId,
             is_enrolled=True,
         )
     return "ok"
+
 
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),

@@ -52,17 +52,11 @@ db.define_table(
 
 db.define_table(
     "course_taken",
-    Field("user_id", 'reference student',writable=False,readable=True),
-    Field("course_id","integer", "reference course",writable=False,readable=True),
+    Field("user_id", 'reference auth_user',writable=False,readable=True),
+    Field("course_id", "integer", "reference course",writable=False,readable=True),
     Field("is_enrolled", type="boolean"),
 )
 
 db.student.id.writable = False
 db.course.id.writable = False
-
-
 db.commit()
-
-
-
-
