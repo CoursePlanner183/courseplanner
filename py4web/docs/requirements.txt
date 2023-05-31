@@ -1,0 +1,9 @@
+### optional, used for documentation only ###
+
+docutils
+PyStemmer<2.2
+sphinx
+sphinx-tabs
+sphinx_rtd_theme
+rinohtype
+sphinxcontrib-spelling
