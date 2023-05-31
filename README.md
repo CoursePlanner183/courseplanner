@@ -1,13 +1,13 @@
 # Course Planner
 
 ### Team Members
-| Name | Email |
-|------|-------|
-| Neeha Ravula | nravula@ucsc.edu |
-| Vincent Jay Olandria | volandri@ucsc.edu |
-| Jasmin Perez | jpere131@ucsc.edu |
-| Colby Frey | csfrey@ucsc.edu |
-| Jeffrey Gu | jrgu@ucsc.edu |
+| Name | Email | Github Username |
+|------|-------| --------------- |
+| Neeha Ravula | nravula@ucsc.edu | neeharavula |
+| Vincent Jay Olandria | volandri@ucsc.edu | volandri |
+| Jasmin Perez | jpere131@ucsc.edu | jpere131 |
+| Colby Frey | csfrey@ucsc.edu | ColbyFrey |
+| Jeffrey Gu | jrgu@ucsc.edu | drunkNH |
 
 ### Overview
 This web app is a comprehensive course planner that allows students to manage their coursework in a seamless manner. Users can easily add, edit, and delete courses and categorize them by their organized status, whether they have taken the course, plan to take it, or want to take it. This allows for easy management of coursework and ensures that users can meet their academic requirements.
