@@ -53,8 +53,12 @@ def index():
 @action.uses(db, auth.user, url_signer)
 def get_courses():
     courses = db(db.course).select().as_list()
-    courses_taken = db(db.course_taken).select().as_list()
+    courses_taken = db(db.course_taken.user_id == auth.user_id).select().as_list()
+    #print(courses_taken)
+    #print(db(db.course_taken.user_id).select().as_list())
+    #print(auth.user_id)
     return dict(
+        id=auth.user_id,
         courses=courses,
         courses_taken=courses_taken,
         )
@@ -93,6 +97,7 @@ def add_courses():
         db.course_taken.insert(
             course_id=courseId,
             is_enrolled=True,
+            user_id = auth.user_id
         )
     return "ok"
 
@@ -101,7 +106,7 @@ def add_courses():
 def delete_courses():
     courses_delete = request.json.get('courses_delete')
     for courseId in courses_delete:
-        db(db.course_taken.course_id == courseId).delete()
+        db((db.course_taken.course_id == courseId)).delete()
     return "ok"
 
 csu_schools = [

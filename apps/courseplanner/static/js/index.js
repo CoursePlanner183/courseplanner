@@ -12,6 +12,7 @@ let init = (app) => {
 
     // This is the Vue data.
     app.data = {
+        id: 0,
         courses: [],
         courses_taken: [],
         selectedCourses: [],
