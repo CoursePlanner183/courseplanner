@@ -4,6 +4,16 @@
   [v-cloak] {
     display: none;
   }
+
+  .subheader {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.subheader a {
+  text-decoration: underline;
+  
+}
 </style>
 
 
@@ -64,7 +74,10 @@
     <div class="column is-one-third has-background-light">
       <section class="section">
         <div class="container">
-          <h2 class="subtitle">Courses</h2>
+          <h2 class="subtitle mb-0">Courses</h2>
+          <div class="subheader">
+            Don't see your course? <a href='[[=URL("course/create")]]'>Create one here</a>.
+          </div>
           <div class="field has-addons">
             <div class="control is-expanded">
               <input class="input" type="text" placeholder="Search for previous courses">
@@ -87,15 +100,8 @@
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add Course</span>
+            <span>Add</span>
           </a>
-          <a class="button is-info" href='[[=URL("course/create")]]'>
-            <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
-            <span>Create Course</span>
-          </a>
-          
           <a class="button is-warning" @click="deleteMode=!deleteMode">
             <span class="icon">
               <i class="fa fa-exclamation-triangle"></i>
