@@ -109,6 +109,12 @@ def delete_courses():
         db((db.course_taken.course_id == courseId)).delete()
     return "ok"
 
+
+@action('grades/calculator', method=["GET", "POST"])
+@action.uses('calculator.html', db, auth.user, url_signer)
+def calc():
+    return dict()
+
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
     ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
