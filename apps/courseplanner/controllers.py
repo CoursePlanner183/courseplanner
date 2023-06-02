@@ -83,6 +83,31 @@ def create_course():
     if form.accepted:
         redirect(URL("index"))
     return dict(form=form)
+"""
+@action('course/edit/<course_id>', method=["GET", "POST"])
+@action.uses('edit_course.html', db, auth.user, url_signer)
+def edit_course(course_id):
+    course = db.course(course_id)
+    if not course:
+        redirect(URL("index"))
+
+    form = Form(db.course, record=course, deletable=False, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL("index"))
+
+    return dict(form=form)"""
+
+@action('course/edit/<course_id:int>', method=["GET", "POST"])
+@action.uses('edit_course.html', db, session, auth.user)
+def edit_course(course_id=None):
+    assert course_id is not None
+    course = db.course[course_id]
+    if course is None:
+        redirect(URL('index'))
+    form = Form(db.course, record=course, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL('index'))
+    return dict(form=form)
 
 
 @action("add_courses", method="POST")
