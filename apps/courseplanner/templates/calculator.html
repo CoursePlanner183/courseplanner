@@ -16,270 +16,276 @@
 </style>
 
 
-
- <div class="column is-half">
-    <h1 class="title">Grade Calculator</h1>
-    <form autocomplete="off">
-        <div class="field">
-            <div class="table-container">
-                <table id="tbl" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <tbody>
-                    <tr>
-                        <td>Assignment<br>(optional)</td>
-                        <td class="has-text-centered">Grade (%)</td>
-                        <td>Weight</td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="e.g Assignment" class="input" autofocus></td>
-                        <td class="is-hidden-touch"><input type="number" name="grade[]" min="0" step="any" class="input"></td>
-                        <td><input type="number" name="weight[]" min="0" step="any" class="input"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="e.g Homework" class="input"></td>
-                        <td class="is-hidden-touch"><input type="number" name="grade[]" min="0" step="any" class="input"></td>
-                        <td><input type="number" name="weight[]" min="0" step="any" class="input"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="e.g Exam" class="input"></td>
-                        <td class="is-hidden-touch"><input type="number" name="grade[]" min="0" step="any" class="input"></td>
-                        <td><input type="number" name="weight[]" min="0" step="any" class="input"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="field">
-            <button type="button" id="addrow" title="Add row" onclick="AddRow()" class="button is-link is-fullwidth">
-                <span>+</span> Add row
-            </button>
-        </div>
-
-        <div class="field">
-            <div class="buttons">
-                <button type="button" id="calcbtn" title="Calculate" onclick="Calc()" class="button is-success">Calculate</button>
-                <button type="reset" id="resetbtn" title="Reset" onclick="OnReset()" class="button is-secondary">Reset</button>
-            </div>
-        </div>
-
-        <div class="field">
-            <label id="avglabel" for="avg" class="label">Average grade</label>
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" id="avg" class="input is-small" readonly>
-                </div>
-                <div class="control">
-                    <input type="text" id="avglet" class="input is-small" readonly>
+<div class="columns">
+    <div class="column mt-6 is-half">
+        <h1 class="title">Grade Calculator</h1>
+        <p>Grade calculator with percentage grades</p>
+        <form autocomplete="off">
+            <div class="field">
+                <div class="table-container">
+                    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <tbody>
+                        <tr>
+                            <th class="has-text-centered">Assignment<br>(optional)</th>
+                            <th class="has-text-centered">Grade (%)</th>
+                            <th class="has-text-centered">Weight</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="e.g Assignment" class="input" autofocus></td>
+                            <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
+                            <td><input type="number" min="0" step="any" class="input"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="e.g Homework" class="input"></td>
+                            <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
+                            <td><input type="number" min="0" step="any" class="input"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="e.g Exam" class="input"></td>
+                            <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
+                            <td><input type="number" min="0" step="any" class="input"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-    </form>
+            <div class="field mt-5">
+                <button type="button" title="Add row" class="button is-link is-fullwidth"><span>+</span> Add row</button>
+            </div>
 
-
-    <h1 class="title mt-6">Final Grade Calculator</h1>
-    <p>Calculate final exam grade from current grade and the target grade:</p>
-    <form autocomplete="off">
-        <div class="field is-horizontal">
-            <label for="avg0" class="label col-sm-4 col-form-label">Current grade</label>
-        </div>
-        <div class="field-body">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" min="0" step="any" id="avg0" class="input" autofocus>
-                </div>
-                <div class="control">
-                    <span class="button is-static">%</span>
+            <div class="field">
+                <div class="buttons">
+                    <button type="button"  title="Calculate" class="button is-success">Calculate</button>
+                    <button type="reset" title="Reset" class="button is-secondary">Reset</button>
                 </div>
             </div>
-        </div>
 
-        <div class="field is-horizontal">
-            <label for="total0" class="label col-sm-4 col-form-label">Target grade that you want to get in the class</label>
-        </div>
-        <div class="field-body">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" min="0" step="any" id="total0" class="input">
-                </div>
-                <div class="control">
-                    <span class="button is-static">%</span>
+            <div class="field">
+                <label  class="label">Average grade</label>
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="text" placeholder="Percentage" min="0" step="any"  class="input" readonly>
+                    </div>
+                    <div class="control">
+                        <span class="button is-static">%</span>
+                    </div>
+                    <div class="control pl-4">
+                        <input type="text" placeholder="Letter Grade" min="0" step="any"  class="input" readonly>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="field is-horizontal">
-            <label for="weight0" class="label col-sm-4 col-form-label">Final exam weight</label>
-        </div>
-        <div class="field-body">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" min="0" step="any" id="weight0" class="input">
-                </div>
-                <div class="control">
-                    <span class="button is-static">%</span>
-                </div>
+        </form>
+
+
+        <h1 class="title mt-6">Final Grade Calculator</h1>
+        <p>Calculate final exam grade from current grade and the target grade:</p>
+        <form autocomplete="off">
+            <div class="field is-horizontal">
+                <label class="label col-sm-4 col-form-label">Current grade</label>
             </div>
-        </div>
-
-        <div class="field is-horizontal">
-            <label class="label col-sm-4 col-form-label">&nbsp;</label>
             <div class="field-body">
-                <div class="field is-grouped">
+                <div class="field has-addons">
                     <div class="control">
-                        <button type="button" id="calcbtn0" onclick="OnCalc0()" title="Calculate" class="button is-success">Calculate</button>
+                        <input type="text" min="0" step="any"  class="input" autofocus>
                     </div>
                     <div class="control">
-                        <button type="reset" id="resetbtn0" title="Reset" class="button is-secondary">Reset</button>
+                        <span class="button is-static">%</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="field is-horizontal">
-            <label for="final0" class="label col-sm-4 col-form-label">Final exam grade needed to get the target grade</label>
-        </div>
-        <div class="field-body">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" min="0" step="any" id="final0" class="input" readonly>
+            <div class="field is-horizontal">
+                <label class="label col-sm-4 col-form-label">Target grade that you want to get in the class</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="text" min="0" step="any"  class="input">
+                    </div>
+                    <div class="control">
+                        <span class="button is-static">%</span>
+                    </div>
                 </div>
-                <div class="control">
-                    <span class="button is-static">%</span>
+            </div>
+
+            <div class="field is-horizontal">
+                <label class="label col-sm-4 col-form-label">Final exam weight</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="text" min="0" step="any" class="input">
+                    </div>
+                    <div class="control">
+                        <span class="button is-static">%</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </form>
-    
-    <h1 class="title mt-6">GPA Calculator</h1>
-    <p>GPA calculator - calculates GPA from letter grades and credit points:</p>
-    <form id="calcform" name="calcform" class="calc" autocomplete="off">
-    <table id="tbl" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-        <tbody>
-        <tr>
-            <th>Course (optional)</th>
-            <th>Grade</th>
-            <th>Credits</th>
-        </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td><input type="text" name="class[]" class="input" placeholder="Course #1" autofocus></td>
-            <td>
-            <div class="select">
-                <select name="grade[]" class="input">
-                <option selected>--</option>
-                <option>A+</option>
-                <option>A</option>
-                <option>A-</option>
-                <option>B+</option>
-                <option>B</option>
-                <option>B-</option>
-                <option>C+</option>
-                <option>C</option>
-                <option>C-</option>
-                <option>D+</option>
-                <option>D</option>
-                <option>D-</option>
-                <option>F</option>
-                <option>P</option>
-                <option>NP</option>
-                </select>
+            <div class="field is-horizontal">
+                <label class="label col-sm-4 col-form-label">&nbsp;</label>
+                <div class="field-body">
+                    <div class="field is-grouped mt-2">
+                        <div class="control">
+                            <button type="button"  title="Calculate" class="button is-success">Calculate</button>
+                        </div>
+                        <div class="control">
+                            <button type="reset"  title="Reset" class="button is-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            </td>
-            <td><input type="text" min="0" step="any" name="hours[]" class="input"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="class[]" class="input" placeholder="Course #2"></td>
-            <td>
-            <div class="select">
-                <select name="grade[]" class="input">
-                <option selected>--</option>
-                <option>A+</option>
-                <option>A</option>
-                <option>A-</option>
-                <option>B+</option>
-                <option>B</option>
-                <option>B-</option>
-                <option>C+</option>
-                <option>C</option>
-                <option>C-</option>
-                <option>D+</option>
-                <option>D</option>
-                <option>D-</option>
-                <option>F</option>
-                <option>P</option>
-                <option>NP</option>
-                </select>
+
+            <div class="field is-horizontal">
+                <label class="label col-sm-4 col-form-label">Final exam grade needed to get the target grade</label>
             </div>
-            </td>
-            <td><input type="text" min="0" step="any" name="hours[]" class="input"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="class[]" class="input" placeholder="Course #3"></td>
-            <td>
-            <div class="select">
-                <select name="grade[]" class="input">
-                <option selected>--</option>
-                <option>A+</option>
-                <option>A</option>
-                <option>A-</option>
-                <option>B+</option>
-                <option>B</option>
-                <option>B-</option>
-                <option>C+</option>
-                <option>C</option>
-                <option>C-</option>
-                <option>D+</option>
-                <option>D</option>
-                <option>D-</option>
-                <option>F</option>
-                <option>P</option>
-                <option>NP</option>
-                </select>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="text" min="0" step="any"  class="input" readonly>
+                    </div>
+                    <div class="control">
+                        <span class="button is-static">%</span>
+                    </div>
+                </div>
             </div>
-            </td>
-            <td><input type="text" min="0" step="any" name="hours[]" class="input"></td>
-        </tr>
-        </tbody>
-    </table>
 
-    <div class="field">
-        <button type="button" id="addrow" title="Add row" class="button is-link is-fullwidth"><span>+</span> Add row</button>
+        </form>
+            
     </div>
 
-    <div id="cumdiv" class="field">
-        <label for="gpa" class="label">Add previous cumulative GPA/credits (optional)</label>
-        <div class="columns">
-        <div class="column">
-            <input type="text" min="0" step="any" id="cgpa" placeholder="cumulative gpa" class="input">
+    <div class="column is-right">
+        <h1 class="title mt-6">GPA Calculator</h1>
+        <p>GPA calculator - calculates GPA from letter grades and credit points:</p>
+        <form  class="calc" autocomplete="off">
+        <table  class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            <tbody>
+            <tr>
+                <th class="has-text-centered">Course<br>(optional)</th>
+                <th class="has-text-centered">Grade</th>
+                <th class="has-text-centered">Credits</th>
+            </tr>
+            </tbody>
+            <tbody>
+            <tr>
+                <td><input type="text" class="input" placeholder="Course #1" autofocus></td>
+                <td>
+                <div class="select">
+                    <select class="input">
+                    <option selected>--</option>
+                    <option>A+</option>
+                    <option>A</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B</option>
+                    <option>B-</option>
+                    <option>C+</option>
+                    <option>C</option>
+                    <option>C-</option>
+                    <option>D+</option>
+                    <option>D</option>
+                    <option>D-</option>
+                    <option>F</option>
+                    <option>P</option>
+                    <option>NP</option>
+                    </select>
+                </div>
+                </td>
+                <td><input type="text" min="0" step="any" class="input"></td>
+            </tr>
+            <tr>
+                <td><input type="text" class="input" placeholder="Course #2"></td>
+                <td>
+                <div class="select">
+                    <select class="input">
+                    <option selected>--</option>
+                    <option>A+</option>
+                    <option>A</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B</option>
+                    <option>B-</option>
+                    <option>C+</option>
+                    <option>C</option>
+                    <option>C-</option>
+                    <option>D+</option>
+                    <option>D</option>
+                    <option>D-</option>
+                    <option>F</option>
+                    <option>P</option>
+                    <option>NP</option>
+                    </select>
+                </div>
+                </td>
+                <td><input type="text" min="0" step="any" class="input"></td>
+            </tr>
+            <tr>
+                <td><input type="text" class="input" placeholder="Course #3"></td>
+                <td>
+                <div class="select">
+                    <select class="input">
+                    <option selected>--</option>
+                    <option>A+</option>
+                    <option>A</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B</option>
+                    <option>B-</option>
+                    <option>C+</option>
+                    <option>C</option>
+                    <option>C-</option>
+                    <option>D+</option>
+                    <option>D</option>
+                    <option>D-</option>
+                    <option>F</option>
+                    <option>P</option>
+                    <option>NP</option>
+                    </select>
+                </div>
+                </td>
+                <td><input type="text" min="0" step="any" class="input"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="field">
+            <button type="button"  title="Add row" class="button is-link is-fullwidth"><span>+</span>Add row</button>
         </div>
-        <div class="column">
-            <input type="text" min="0" step="any" id="chours" placeholder="credits" class="input">
-        </div>
-        <div class="column">
-            <button type="button" id="calcbtn" title="Calculate" class="button is-success">Calculate</button>
-            <button type="reset" id="resetbtn" title="Reset" class="button is-secondary">Reset</button>
-        </div>
-        </div>
-    </div>
 
-    <div class="field">
-        <label for="gpa" class="label">GPA</label>
-        <input type="text" id="gpa" readonly class="input is-large">
-    </div>
+        <div  class="field">
+            <label class="label">Add previous cumulative GPA/credits (optional)</label>
+            <div class="columns">
+            <div class="column">
+                <input type="text" min="0" step="any"  placeholder="cumulative gpa" class="input">
+            </div>
+            <div class="column">
+                <input type="text" min="0" step="any"  placeholder="credits" class="input">
+            </div>
+            <div class="column">
+                <button type="button"  title="Calculate" class="button is-success">Calculate</button>
+                <button type="reset"  title="Reset" class="button is-secondary">Reset</button>
+            </div>
+            </div>
+        </div>
 
-    <div class="field">
-        <div id="gpacircle" class="red small mb-3"></div>
-    </div>
+        <div class="field">
+            <label class="label">GPA</label>
+            <input type="text"  readonly class="input is-large">
+        </div>
 
-    <div class="field">
-        <label for="total" class="label">Total credits/hours</label>
-        <input type="text" id="total" class="input" readonly>
+        <div class="field">
+            <div  class="red small mb-3"></div>
+        </div>
+
+        <div class="field">
+            <label class="label">Total credits/hours</label>
+            <input type="text"  class="input" readonly>
+        </div>
+        </form>
+
     </div>
-    </form>
-        
 </div>
 
 
