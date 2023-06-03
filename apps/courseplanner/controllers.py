@@ -45,18 +45,24 @@ def index():
     courses = db(db.course).select().as_list()
     return dict(
         courses=courses,
-        add_course_url = URL('add_courses', signer=url_signer),
-        delete_course_url = URL('delete_courses', signer=url_signer)
-        )
+        add_course_url=URL('add_courses', signer=url_signer),
+        delete_course_url=URL('delete_courses', signer=url_signer),
+        edit_course_url = URL('edit_course', signer=url_signer),
+    )
+
+@action('course/create', method=["GET", "POST"])
+@action.uses('course.html', db, auth.user, url_signer)
+def create_course():
+    form = Form(db.course,deletable=False, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL("index"))
+    return dict(form=form)
 
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == auth.user_id).select().as_list()
-    #print(courses_taken)
-    #print(db(db.course_taken.user_id).select().as_list())
-    #print(auth.user_id)
     return dict(
         id=auth.user_id,
         courses=courses,
@@ -76,38 +82,16 @@ def profile():
     form = Form(Fields,deletable=False, formstyle=FormStyleBulma)
     return dict(form=form)
 
-@action('course/create', method=["GET", "POST"])
-@action.uses('course.html', db, auth.user, url_signer)
-def create_course():
-    form = Form(db.course,deletable=False, formstyle=FormStyleBulma)
-    if form.accepted:
-        redirect(URL("index"))
-    return dict(form=form)
-"""
-@action('course/edit/<course_id>', method=["GET", "POST"])
-@action.uses('edit_course.html', db, auth.user, url_signer)
-def edit_course(course_id):
-    course = db.course(course_id)
-    if not course:
-        redirect(URL("index"))
+@action('course/edit', method=["GET", "POST"])
+@action.uses('edit_course.html', db, session, auth.user, url_signer)
+def edit_course():
+    form = Form(db.course, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
 
-    form = Form(db.course, record=course, deletable=False, formstyle=FormStyleBulma)
-    if form.accepted:
-        redirect(URL("index"))
-
-    return dict(form=form)"""
-
-@action('course/edit/<course_id:int>', method=["GET", "POST"])
-@action.uses('edit_course.html', db, session, auth.user)
-def edit_course(course_id=None):
-    assert course_id is not None
-    course = db.course[course_id]
-    if course is None:
-        redirect(URL('index'))
-    form = Form(db.course, record=course, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         redirect(URL('index'))
+
     return dict(form=form)
+
 
 
 @action("add_courses", method="POST")
