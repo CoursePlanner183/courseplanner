@@ -93,7 +93,6 @@ def edit_course():
     return dict(form=form)
 
 
-
 @action("add_courses", method="POST")
 @action.uses(db, auth.user)
 def add_courses():
