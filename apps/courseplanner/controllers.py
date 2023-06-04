@@ -45,18 +45,24 @@ def index():
     courses = db(db.course).select().as_list()
     return dict(
         courses=courses,
-        add_course_url = URL('add_courses', signer=url_signer),
-        delete_course_url = URL('delete_courses', signer=url_signer)
-        )
+        add_course_url=URL('add_courses', signer=url_signer),
+        delete_course_url=URL('delete_courses', signer=url_signer),
+        edit_course_url = URL('edit_course', signer=url_signer),
+    )
+
+@action('course/create', method=["GET", "POST"])
+@action.uses('course.html', db, auth.user, url_signer)
+def create_course():
+    form = Form(db.course,deletable=False, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL("index"))
+    return dict(form=form)
 
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == auth.user_id).select().as_list()
-    #print(courses_taken)
-    #print(db(db.course_taken.user_id).select().as_list())
-    #print(auth.user_id)
     return dict(
         id=auth.user_id,
         courses=courses,
@@ -76,12 +82,14 @@ def profile():
     form = Form(Fields,deletable=False, formstyle=FormStyleBulma)
     return dict(form=form)
 
-@action('course/create', method=["GET", "POST"])
-@action.uses('course.html', db, auth.user, url_signer)
-def create_course():
-    form = Form(db.course,deletable=False, formstyle=FormStyleBulma)
+@action('course/edit', method=["GET", "POST"])
+@action.uses('edit_course.html', db, session, auth.user, url_signer)
+def edit_course():
+    form = Form(db.course, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+
     if form.accepted:
-        redirect(URL("index"))
+        redirect(URL('index'))
+
     return dict(form=form)
 
 
@@ -108,6 +116,12 @@ def delete_courses():
     for courseId in courses_delete:
         db((db.course_taken.course_id == courseId)).delete()
     return "ok"
+
+
+@action('grades/calculator', method=["GET", "POST"])
+@action.uses('calculator.html', db, auth.user, url_signer)
+def calc():
+    return dict()
 
 
 def add_california_schools():

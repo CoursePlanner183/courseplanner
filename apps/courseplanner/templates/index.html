@@ -1,149 +1,171 @@
 [[extend 'layout.html']]
 
 <style>
-  [v-cloak] {
-    display: none;
-  }
+    [v-cloak] {
+        display: none;
+    }
 
-  .subheader {
-  margin-top: 10px;
-  font-size: 13px;
-}
+    .subheader {
+        margin-top: 10px;
+        font-size: 13px;
+    }
 
-.subheader a {
-  text-decoration: underline;
-  
-}
+    .subheader a {
+        text-decoration: underline;
+
+    }
 </style>
 
 
 <div class="section" id="vue-target" v-cloak>
 
-  <div class="columns">
+    <div class="columns">
 
-    <div class="column">
-      <section class="section">
-        <div class="container">
-          <h2 id="planner_name" class="subtitle">Insert Planner Name Here</h2>
-          <!-- Current courses list goes here -->
-          <table id="table" class="table is-striped is-fullwidth" hidden>
-            <thead>
-              <th></th>
-              <th>Fall</th>
-              <th>Winter</th>
-              <th>Spring</th>
-              <th>Summer</th>
-            </thead>
-            <tbody id="planner_body" >
-              <tr id="first_year">
-                <td class="has-text-weight-bold">1st Year</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              <tr id="second_year">
-                <td class="has-text-weight-bold">2nd Year</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr id="third_year">
-                <td class="has-text-weight-bold">3rd Year</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr id="fourth_year">
-                <td class="has-text-weight-bold">4th Year</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <h2 id="no_table">Add a course to your planner.</h3>
-  
-        </div>
-      </section>
-    </div>
+        <div class="column">
+            <section class="section">
+                <div class="container">
+                    <h2 id="planner_name" class="subtitle">Insert Planner Name Here</h2>
+                    <!-- Current courses list goes here -->
+                    <table id="table" class="table is-striped is-fullwidth" hidden>
+                        <thead>
+                            <th></th>
+                            <th>Fall</th>
+                            <th>Winter</th>
+                            <th>Spring</th>
+                            <th>Summer</th>
+                        </thead>
+                        <tbody id="planner_body">
+                            <tr id="first_year">
+                                <td class="has-text-weight-bold">1st Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            <tr id="second_year">
+                                <td class="has-text-weight-bold">2nd Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr id="third_year">
+                                <td class="has-text-weight-bold">3rd Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr id="fourth_year">
+                                <td class="has-text-weight-bold">4th Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h2 id="no_table">Add a course to your planner.</h3>
 
-
-    <div class="column is-one-third has-background-light">
-      <section class="section">
-        <div class="container">
-          <h2 class="subtitle mb-0">Courses</h2>
-          <div class="subheader">
-            Don't see your course? <a href='[[=URL("course/create")]]'>Create one here</a>.
-          </div>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <input class="input" type="text" placeholder="Search for previous courses">
-            </div>
-            <div class="control">
-              <button class="button is-primary">Search</button>
-            </div>
-          </div>
-          
-          <div class="field has-addons" v-for="course in courses">
-            <div class="level-right">
-              <label class="checkbox">
-                <input type="checkbox"  v-model="selectedCourses" :id="course.name" :value="course.id">
-                  {{course.name}}
-              </label>
-            </div>
-          </div>
-
-          <a class="button is-success clickable" @click="addcourses()" >
-            <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
-            <span>Add</span>
-          </a>
-          <a class="button is-warning" @click="deleteMode=!deleteMode">
-            <span class="icon">
-              <i class="fa fa-exclamation-triangle"></i>
-            </span>
-            <span>Delete Courses</span>
-          </a>
-          <div v-if="deleteMode">
-            <div class="field has-addons" v-for="course in courses">
-              <div class="field has-addons" v-for="ct in courses_taken">
-                <div v-if="ct.course_id==course.id">
-                  <div class="level-right">
-                    <label class="checkbox">
-                      <input type="checkbox"  v-model="selectedDelete" :id="course.name" :value="course.id">
-                        {{course.name}}
-                    </label>
-                  </div>
                 </div>
-              </div>
-            </div>
-            <a class="button is-danger" @click="deleteMode=!deleteMode; deleteCourses()">
-              <span class="icon">
-                <i class="fa fa-times-circle"></i>
-              </span>
-              <span>Delete Selected Courses</span>
-            </a>
-          </div>
+            </section>
+        </div>
 
 
-      </section>
+        <div class="column is-one-third has-background-light">
+            <section class="section">
+                <div class="container">
+                    <h2 class="subtitle">Courses</h2>
+                    <div class="subheader">
+                        Don't see your course? <a href='[[=URL("course/create")]]'>Create one here</a>.
+                    </div>
+                    <div class="field has-addons">
+                        <div class="control is-expanded">
+                            <input class="input" type="text" placeholder="Search for previous courses">
+                        </div>
+                        <div class="control">
+                            <button class="button is-primary">Search</button>
+                        </div>
+                    </div>
+
+                    <table class="table is-striped is-fullwidth">
+                        <tbody>
+                            <tr v-for="course in courses">
+                                <td>
+                                    <div class="field has-addons">
+                                        <div class="level-right">
+                                            <label class="checkbox mr-6">
+                                                <input type="checkbox" v-model="selectedCourses" :id="course.name"
+                                                    :value="course.id">
+                                                {{course.name}}
+                                            </label>
+                                            <a class="button is-light" href='[[=URL("course/edit")]]'>
+                                                <span class="icon "><i class="fa fa-fw fa-pencil"></i></span>
+                                                <span>Edit</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <a class="button is-success clickable" @click="addcourses()">
+                        <span class="icon">
+                            <i class="fa fa-plus"></i>
+                        </span>
+                        <span>Add Course</span>
+                    </a>
+                    <a class="button is-info" href='[[=URL("course/create")]]'>
+                        <span class="icon">
+                            <i class="fa fa-plus"></i>
+                        </span>
+                        <span>Create Course</span>
+                    </a>
+
+                    <a class="button is-warning" @click="deleteMode=!deleteMode">
+                        <span class="icon">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </span>
+                        <span>Delete Courses</span>
+                    </a>
+                    <div v-if="deleteMode">
+                        <div class="field has-addons" v-for="course in courses">
+                            <div class="field has-addons" v-for="ct in courses_taken">
+                                <div v-if="ct.course_id==course.id">
+                                    <div class="level-right">
+                                        <label class="checkbox">
+                                            <input type="checkbox" v-model="selectedDelete" :id="course.name"
+                                                :value="course.id">
+                                            {{course.name}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="button is-danger" @click="deleteMode=!deleteMode; deleteCourses()">
+                            <span class="icon">
+                                <i class="fa fa-times-circle"></i>
+                            </span>
+                            <span>Delete Selected Courses</span>
+                        </a>
+                    </div>
+
+
+            </section>
+
+        </div>
+
+
+
 
     </div>
-
-
-
-
-  </div>
 </div>
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let add_course_url = "[[=XML(add_course_url)]]";
-  let delete_course_url = "[[=XML(delete_course_url)]]";
+    let add_course_url = "[[=XML(add_course_url)]]";
+    let delete_course_url = "[[=XML(delete_course_url)]]";
+    let edit_course_url = "[[=XML(edit_course_url)]]";
 </script>
 <script src="js/index.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>
