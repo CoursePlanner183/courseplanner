@@ -123,6 +123,16 @@ def delete_courses():
 def calc():
     return dict()
 
+
+@action('get_my_courses')
+@action.uses(db, auth.user, url_signer)
+def get_my_courses():
+    query = (db.course_taken.user_id == auth.user_id) & (db.course_taken.course_id == db.course.id)
+    courses_taken = db(query).select(db.course_taken.ALL, db.course.name).as_list()
+    courses_taken = [{**c["course_taken"], "name": c["course"]["name"]} for c in courses_taken]
+    return dict(courses_taken=courses_taken)
+
+
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
     ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),

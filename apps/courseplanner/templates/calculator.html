@@ -20,39 +20,39 @@
     <div class="columns">
         <div class="column mt-6 is-half">
             <h1 class="title">Grade Calculator</h1>
+            <p>Course:</p>
+            <div class="select">
+                <select class="input">
+                <option selected v-for="course in courses">{{course.name}}</option>
+                </select>
+            </div>
             <p>Grade calculator with percentage grades</p>
-            <form autocomplete="off">
                 <div class="field">
                     <div class="table-container">
-                        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <table id="grade-table" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th class="has-text-centered">Assignment<br>(optional)</th>
+                                    <th class="has-text-centered">Grade (%)</th>
+                                    <th class="has-text-centered">Weight</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                            <tr>
-                                <th class="has-text-centered">Assignment<br>(optional)</th>
-                                <th class="has-text-centered">Grade (%)</th>
-                                <th class="has-text-centered">Weight</th>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="e.g Assignment" class="input" autofocus></td>
-                                <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
-                                <td><input type="number" min="0" step="any" class="input"></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="e.g Homework" class="input"></td>
-                                <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
-                                <td><input type="number" min="0" step="any" class="input"></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="e.g Exam" class="input"></td>
-                                <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input"></td>
-                                <td><input type="number" min="0" step="any" class="input"></td>
-                            </tr>
+                                <tr v-for="category in grade_categories">
+                                    <td><input type="text" :placeholder="category.placeholder" class="input" v-model="category.assignment" autofocus></td>
+                                    <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input" v-model="category.grade"></td>
+                                    <td><input type="number" min="0" step="any" class="input" v-model="category.weight"></td>
+                                    <td>
+                                        <button class="button is-danger" @click="deleteRow(category)">X</button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="field mt-5">
-                    <button type="button" title="Add row" class="button is-link is-fullwidth"><span>+</span>Add row</button>
+                    <button id="add-row-button" class="button is-link is-fullwidth" @click="addRow">Add row</button>
                 </div>
 
                 <div class="field">
@@ -76,8 +76,6 @@
                         </div>
                     </div>
                 </div>
-
-            </form>
 
 
             <h1 class="title mt-6">Final Grade Calculator</h1>
@@ -161,129 +159,129 @@
             <h1 class="title mt-6">GPA Calculator</h1>
             <p>GPA calculator - calculates GPA from letter grades and credit points:</p>
             <form  class="calc" autocomplete="off">
-            <table  class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <tbody>
-                <tr>
-                    <th class="has-text-centered">Course<br>(optional)</th>
-                    <th class="has-text-centered">Grade</th>
-                    <th class="has-text-centered">Credits</th>
-                </tr>
-                </tbody>
-                <tbody>
-                <tr>
-                    <td><input type="text" class="input" placeholder="Course #1" autofocus></td>
-                    <td>
-                    <div class="select">
-                        <select class="input">
-                        <option selected>--</option>
-                        <option>A+</option>
-                        <option>A</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B</option>
-                        <option>B-</option>
-                        <option>C+</option>
-                        <option>C</option>
-                        <option>C-</option>
-                        <option>D+</option>
-                        <option>D</option>
-                        <option>D-</option>
-                        <option>F</option>
-                        <option>P</option>
-                        <option>NP</option>
-                        </select>
+                <table  class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <tbody>
+                        <tr>
+                            <th class="has-text-centered">Course<br>(optional)</th>
+                            <th class="has-text-centered">Grade</th>
+                            <th class="has-text-centered">Credits</th>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="input" placeholder="Course #1" autofocus></td>
+                            <td>
+                                <div class="select">
+                                    <select class="input">
+                                    <option selected>--</option>
+                                    <option>A+</option>
+                                    <option>A</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B</option>
+                                    <option>B-</option>
+                                    <option>C+</option>
+                                    <option>C</option>
+                                    <option>C-</option>
+                                    <option>D+</option>
+                                    <option>D</option>
+                                    <option>D-</option>
+                                    <option>F</option>
+                                    <option>P</option>
+                                    <option>NP</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="text" min="0" step="any" class="input"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="input" placeholder="Course #2"></td>
+                            <td>
+                                <div class="select">
+                                    <select class="input">
+                                    <option selected>--</option>
+                                    <option>A+</option>
+                                    <option>A</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B</option>
+                                    <option>B-</option>
+                                    <option>C+</option>
+                                    <option>C</option>
+                                    <option>C-</option>
+                                    <option>D+</option>
+                                    <option>D</option>
+                                    <option>D-</option>
+                                    <option>F</option>
+                                    <option>P</option>
+                                    <option>NP</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="text" min="0" step="any" class="input"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="input" placeholder="Course #3"></td>
+                            <td>
+                                <div class="select">
+                                    <select class="input">
+                                    <option selected>--</option>
+                                    <option>A+</option>
+                                    <option>A</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B</option>
+                                    <option>B-</option>
+                                    <option>C+</option>
+                                    <option>C</option>
+                                    <option>C-</option>
+                                    <option>D+</option>
+                                    <option>D</option>
+                                    <option>D-</option>
+                                    <option>F</option>
+                                    <option>P</option>
+                                    <option>NP</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="text" min="0" step="any" class="input"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="field">
+                    <button type="button"  title="Add row" class="button is-link is-fullwidth"><span>+</span>Add row</button>
+                </div>
+
+                <div  class="field">
+                    <label class="label">Add previous cumulative GPA/credits (optional)</label>
+                    <div class="columns">
+                        <div class="column">
+                            <input type="text" min="0" step="any"  placeholder="cumulative gpa" class="input">
+                        </div>
+                        <div class="column">
+                            <input type="text" min="0" step="any"  placeholder="credits" class="input">
+                        </div>
+                        <div class="column">
+                            <button type="button"  title="Calculate" class="button is-success">Calculate</button>
+                            <button type="reset"  title="Reset" class="button is-secondary">Reset</button>
+                        </div>
                     </div>
-                    </td>
-                    <td><input type="text" min="0" step="any" class="input"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="input" placeholder="Course #2"></td>
-                    <td>
-                    <div class="select">
-                        <select class="input">
-                        <option selected>--</option>
-                        <option>A+</option>
-                        <option>A</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B</option>
-                        <option>B-</option>
-                        <option>C+</option>
-                        <option>C</option>
-                        <option>C-</option>
-                        <option>D+</option>
-                        <option>D</option>
-                        <option>D-</option>
-                        <option>F</option>
-                        <option>P</option>
-                        <option>NP</option>
-                        </select>
-                    </div>
-                    </td>
-                    <td><input type="text" min="0" step="any" class="input"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="input" placeholder="Course #3"></td>
-                    <td>
-                    <div class="select">
-                        <select class="input">
-                        <option selected>--</option>
-                        <option>A+</option>
-                        <option>A</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B</option>
-                        <option>B-</option>
-                        <option>C+</option>
-                        <option>C</option>
-                        <option>C-</option>
-                        <option>D+</option>
-                        <option>D</option>
-                        <option>D-</option>
-                        <option>F</option>
-                        <option>P</option>
-                        <option>NP</option>
-                        </select>
-                    </div>
-                    </td>
-                    <td><input type="text" min="0" step="any" class="input"></td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="field">
-                <button type="button"  title="Add row" class="button is-link is-fullwidth"><span>+</span>Add row</button>
-            </div>
-
-            <div  class="field">
-                <label class="label">Add previous cumulative GPA/credits (optional)</label>
-                <div class="columns">
-                <div class="column">
-                    <input type="text" min="0" step="any"  placeholder="cumulative gpa" class="input">
                 </div>
-                <div class="column">
-                    <input type="text" min="0" step="any"  placeholder="credits" class="input">
-                </div>
-                <div class="column">
-                    <button type="button"  title="Calculate" class="button is-success">Calculate</button>
-                    <button type="reset"  title="Reset" class="button is-secondary">Reset</button>
-                </div>
-                </div>
-            </div>
 
-            <div class="field">
-                <label class="label">GPA</label>
-                <input type="text"  readonly class="input is-large">
-            </div>
+                <div class="field">
+                    <label class="label">GPA</label>
+                    <input type="text"  readonly class="input is-large">
+                </div>
 
-            <div class="field">
-                <div  class="red small mb-3"></div>
-            </div>
+                <div class="field">
+                    <div  class="red small mb-3"></div>
+                </div>
 
-            <div class="field">
-                <label class="label">Total credits/hours</label>
-                <input type="text"  class="input" readonly>
-            </div>
+                <div class="field">
+                    <label class="label">Total credits/hours</label>
+                    <input type="text"  class="input" readonly>
+                </div>
             </form>
 
         </div>
@@ -293,6 +291,6 @@
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
-<script src="js/index.js"></script>
+<script src="js/calculator.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>
 [[end]]

@@ -38,7 +38,7 @@ db.define_table(
     "course",
     Field("name", type='string'),
     Field("number", type="integer"),
-    Field("credits", type="float"),
+    Field("credits", type="integer"),
     Field("offering",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
     Field("year","integer"),
 )
@@ -53,8 +53,20 @@ db.define_table(
 db.define_table(
     "course_taken",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
-    Field("course_id", "integer", "reference course",writable=False,readable=True),
+    Field("course_id", "reference course",writable=False,readable=True),
     Field("is_enrolled", type="boolean"),
+    Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
+    Field("year", type="integer"),
+    Field("final_grade", tyoe="string"),
+)
+
+db.define_table(
+    "course_grade_categories",
+    Field("user_id", 'reference auth_user'),
+    Field("course_id", "reference course", writable=False, readable=True),
+    Field("category_name", type="string"),
+    Field("grade", type="float"),
+    Field("weight", type="integer"),
 )
 
 db.student.id.writable = False
