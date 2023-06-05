@@ -48,6 +48,7 @@ def index():
         add_course_url=URL('add_courses', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url = URL('edit_course', signer=url_signer),
+        share_courses_url= URL('share_courses', signer=url_signer),
     )
 
 @action('course/create', method=["GET", "POST"])
@@ -132,6 +133,12 @@ def get_my_courses():
     courses_taken = [{**c["course_taken"], "name": c["course"]["name"]} for c in courses_taken]
     return dict(courses_taken=courses_taken)
 
+
+@action('share_courses', method="POST")
+@action.uses(db, auth.user, url_signer)
+def share_courses():db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
+    courses = db(db.course_taken.user_id == auth.user_id).select().as_list()
+    return "ok"
 
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
