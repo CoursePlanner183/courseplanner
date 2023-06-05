@@ -47,11 +47,12 @@ let init = (app) => {
 
             let lowest_year = Number.MAX_VALUE;
             for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].id;
-
+                courseid = app.vue.courses_taken[index].course_id;
+                console.log(courseid)
                 /// Finds course from courses
                 course = null;
                 for (index in app.vue.courses) {
+                    console.log(app.vue.courses[index].id)
                     if (app.vue.courses[index].id == courseid) {
                         course = app.vue.courses[index];
                     }
@@ -69,7 +70,7 @@ let init = (app) => {
 
             // Adds courses to planner
             for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].id;
+                courseid = app.vue.courses_taken[index].course_id;
 
                 // Finds course from courses
                 course = null;
@@ -104,17 +105,11 @@ let init = (app) => {
         }
     };
 
-    // Set is_shared to true for all courses in course_taken from user
-    app.share_courses = async function() {
-        axios.post(share_courses_url);
-    };
-
     // This contains all the methods.
     app.methods = {
         addcourses: app.addcourses,
         updatePlanner: app.updatePlanner,
         deleteCourses: app.deleteCourses,
-        share_courses: app.share_courses,
     };
 
     // This creates the Vue instance.

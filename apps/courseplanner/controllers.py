@@ -43,6 +43,7 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
+    print(auth.user_id)
     return dict(
         courses=courses,
         add_course_url=URL('add_courses', signer=url_signer),
@@ -70,6 +71,21 @@ def get_courses():
         courses_taken=courses_taken,
         )
 
+@action('get_planners', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_planners():
+    user_id = request.params.get('user_id')
+    courses_taken = db(db.course_taken.user_id == user_id).select().as_list()
+    return dict(
+        courses_taken=courses_taken
+    )
+
+@action('share')
+@action.uses('share.html', db, auth.user, url_signer)
+def share():
+    return dict(
+        get_planners_url= URL('get_planners', signer=url_signer),
+    )
  
 @action('user/profile')
 @action.uses('user.html', db, auth.user, url_signer)
@@ -102,11 +118,15 @@ def add_courses():
     for courseId in courses_selected:
         if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
             return "Course is already taken"
-
+        data = db(db.course.id == courseId).select().as_list()
+        print(data)
+        print(courseId)
         db.course_taken.insert(
             course_id=courseId,
             is_enrolled=True,
-            user_id = auth.user_id
+            user_id = auth.user_id,
+            year = data[0]['year'],
+            season = data[0]['offering'],
         )
     return "ok"
 
