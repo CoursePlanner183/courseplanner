@@ -136,8 +136,8 @@ def get_my_courses():
 
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
-def share_courses():db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
-    courses = db(db.course_taken.user_id == auth.user_id).select().as_list()
+def share_courses():
+    db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
     return "ok"
 
 csu_schools = [
