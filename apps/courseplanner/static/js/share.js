@@ -20,6 +20,7 @@ let init = (app) => {
         axios.get(get_planners_url, {params:{ user_id }}).then(function (response) {
             app.vue.planners = app.enumerate(response.data.courses_taken)
             console.log(app.vue.planners)
+            //Todo add functionality
         });
     }
 
