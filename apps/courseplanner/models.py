@@ -66,7 +66,7 @@ db.define_table(
     Field("course_id", "reference course", writable=False, readable=True),
     Field("category_name", type="string"),
     Field("grade", type="float"),
-    Field("weight", type="integer"),
+    Field("weight", type="float"),
 )
 
 db.student.id.writable = False
