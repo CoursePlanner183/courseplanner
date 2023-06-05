@@ -129,9 +129,31 @@ def calc():
 @action.uses(db, auth.user, url_signer)
 def get_my_courses():
     query = (db.course_taken.user_id == auth.user_id) & (db.course_taken.course_id == db.course.id)
-    courses_taken = db(query).select(db.course_taken.ALL, db.course.name).as_list()
-    courses_taken = [{**c["course_taken"], "name": c["course"]["name"]} for c in courses_taken]
+    courses_taken = db(query).select().as_list()
+    courses_taken = [{**c["course"], **c["course_taken"]} for c in courses_taken]
     return dict(courses_taken=courses_taken)
+
+
+@action('get_grade_categories')
+@action.uses(db, auth.user, url_signer)
+def get_grade_categories():
+    course_id = request.params.get('course_id')
+    query = (db.course_grade_categories.user_id == auth.user_id) & (db.course_grade_categories.course_id == course_id)
+    grade_categories = db(query).select().as_list()
+    
+    query = db.course_taken.id == request.params.get('course_taken_id')
+    grade = db(query).select().as_list()[0]["final_grade"]
+    return dict(grade_categories=grade_categories, grade=grade)
+
+
+@action('submit_grade', method="POST")
+@action.uses(db, auth.user, url_signer)
+def submit_grade():
+    course_id = request.json.get('course_id')
+    grade = request.json.get('grade')
+    query = db.course_taken.id == course_id
+    db(query).update(final_grade=grade)
+    return "ok"
 
 
 @action('share_courses', method="POST")

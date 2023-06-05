@@ -11,7 +11,9 @@ let init = (app) => {
         
         average_grade: undefined,
 
-        courses: []
+        grade: undefined,
+
+        courses: [],
     };
 
     app.enumerate = (a) => {
@@ -37,10 +39,32 @@ let init = (app) => {
         })
     }
 
+    app.getGradeCategories = (course_id, course_taken_id) => {
+        axios.get('/courseplanner/get_grade_categories', { params: { course_id, course_taken_id } }).then(response => {
+            app.data.grade_categories = response.data.grade_categories;
+            app.data.grade = response.data.grade;
+            app.data.average_grade = app.data.grade_categories.reduce((acc, cur) => {
+                return acc + (cur.weight * cur.grade);
+            }, 0);
+        })
+    }
+
+    app.submitGrade = async () => {
+        const response = await axios.post('/courseplanner/submit_grade', { grade: app.data.grade, course_id: app.data.selected_course });
+        console.log(response);
+    }
+
+    app.selectCourse = (e) => {
+        app.data.selected_course = app.data.courses.find(x => x.course_id == e.target.value).id;
+        app.getGradeCategories(e.target.value, app.data.selected_course);
+    }
+
     // This contains all the methods.
     app.methods = {
         addRow: app.addRow,
-        deleteRow: app.deleteRow
+        deleteRow: app.deleteRow,
+        selectCourse: app.selectCourse,
+        submitGrade: app.submitGrade
     };
 
     // This creates the Vue instance.
