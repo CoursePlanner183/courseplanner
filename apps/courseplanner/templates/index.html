@@ -24,9 +24,10 @@
         <div class="column">
             <section class="section">
                 <div class="container">
+
                     <h2 id="planner_name" class="subtitle">Insert Planner Name Here</h2>
                     <!-- Current courses list goes here -->
-                    <table id="table" class="table is-striped is-fullwidth" hidden>
+                    <table id="table" class="table is-striped is-fullwidth">
                         <thead>
                             <th></th>
                             <th>Fall</th>
@@ -76,7 +77,7 @@
                 <div class="container">
                     <h2 class="subtitle">Courses</h2>
                     <div class="subheader">
-                        Don't see your course? <a href='[[=URL("course/create")]]'>Create one here</a>.
+                        Don't see your course? <a href='[[=URL("courses/create")]]'>Create one here</a>.
                     </div>
                     <div class="field has-addons">
                         <div class="control is-expanded">
@@ -115,12 +116,6 @@
                         </span>
                         <span>Add Course</span>
                     </a>
-                    <a class="button is-info" href='[[=URL("course/create")]]'>
-                        <span class="icon">
-                            <i class="fa fa-plus"></i>
-                        </span>
-                        <span>Create Course</span>
-                    </a>
 
                     <a class="button is-warning" @click="deleteMode=!deleteMode">
                         <span class="icon">
@@ -136,7 +131,7 @@
                                         <label class="checkbox">
                                             <input type="checkbox" v-model="selectedDelete" :id="course.name"
                                                 :value="course.id">
-                                            {{course.name}}
+                                            {{course.name}} 
                                         </label>
                                     </div>
                                 </div>

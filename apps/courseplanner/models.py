@@ -72,13 +72,16 @@ db.define_table(
 
 db.define_table(
     "course",
-    Field("name", type='string'),
+    Field("abbrevation", type='string'),
     Field("number", type="integer"),
+    Field("description", type="text"),
     Field("credits", type="float"),
-    Field("offering",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
+    Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
     Field("year","integer"),
+    Field('created_by', 'reference auth_user', default=lambda: auth.user_id)
 )
 
+db.course.created_by.readable = db.course.created_by.writable = False
 db.define_table(
     "student",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
@@ -90,9 +93,15 @@ db.define_table(
     "course_taken",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
     Field("course_id", "integer", "reference course",writable=False,readable=True),
-    Field("is_enrolled", type="boolean"),
+    Field("grade", "integer", "reference course",writable=False,readable=True),
+    Field("offering_taken",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
+    Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
 )
 
 db.student.id.writable = False
 db.course.id.writable = False
 db.commit()
+
+
+
+
