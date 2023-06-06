@@ -75,8 +75,10 @@ def get_courses():
 @action.uses(db, auth.user, url_signer)
 def get_planners():
     user_id = request.params.get('user_id')
-    courses_taken = db(db.course_taken.user_id == user_id).select().as_list()
+    courses = db(db.course).select().as_list()
+    courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
     return dict(
+        courses=courses,
         courses_taken=courses_taken
     )
 

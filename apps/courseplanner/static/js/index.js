@@ -48,11 +48,9 @@ let init = (app) => {
             let lowest_year = Number.MAX_VALUE;
             for (index in app.vue.courses_taken) {
                 courseid = app.vue.courses_taken[index].course_id;
-                console.log(courseid)
                 /// Finds course from courses
                 course = null;
                 for (index in app.vue.courses) {
-                    console.log(app.vue.courses[index].id)
                     if (app.vue.courses[index].id == courseid) {
                         course = app.vue.courses[index];
                     }
