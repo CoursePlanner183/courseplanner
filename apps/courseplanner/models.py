@@ -63,7 +63,7 @@ db.define_table(
 db.define_table(
     "course_grade_categories",
     Field("user_id", 'reference auth_user'),
-    Field("course_id", "reference course", writable=False, readable=True),
+    Field("course_taken_id", "reference course_taken", writable=False, readable=True),
     Field("category_name", type="string"),
     Field("grade", type="float"),
     Field("weight", type="float"),

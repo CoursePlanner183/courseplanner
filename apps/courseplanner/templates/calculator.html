@@ -20,10 +20,10 @@
     <div class="columns">
         <div class="column mt-6 is-half">
             <h1 class="title">Grade Calculator</h1>
-            <p>Course:</p>
-            <div class="select">
+            <div class="select mb-4">
                 <select class="input" @change="selectCourse($event)">
-                <option v-for="course in courses" :value="course.course_id">{{course.name}}</option>
+                <option value="">Choose a course</option>
+                <option v-for="course in courses" :value="course.id">{{course.name}}</option>
                 </select>
             </div>
             <p>Grade calculator with percentage grades</p>
@@ -32,9 +32,9 @@
                     <table id="grade-table" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr>
-                                <th class="has-text-centered">Assignment<br>(optional)</th>
+                                <th class="has-text-centered">Category<br>(optional)</th>
                                 <th class="has-text-centered">Grade (%)</th>
-                                <th class="has-text-centered">Weight</th>
+                                <th class="has-text-centered">Weight (%)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,8 +57,7 @@
 
             <div class="field">
                 <div class="buttons">
-                    <button type="button"  title="Calculate" class="button is-success">Save</button>
-                    <button type="reset" title="Reset" class="button is-secondary">Reset</button>
+                    <button type="button"  title="Calculate" class="button is-success" @click="saveGradeCategories" >Save</button>
                 </div>
             </div>
 
@@ -108,7 +107,7 @@
                 <table  class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                     <tbody>
                         <tr>
-                            <th class="has-text-centered">Course<br>(optional)</th>
+                            <th class="has-text-centered">Course</th>
                             <th class="has-text-centered">Grade</th>
                             <th class="has-text-centered">Credits</th>
                         </tr>
@@ -124,7 +123,7 @@
 
                 <div class="field">
                     <label class="label">GPA</label>
-                    <input type="text"  readonly class="input is-large">
+                    <input type="text"  readonly class="input is-large" v-model="gpa">
                 </div>
 
                 <div class="field">
@@ -133,7 +132,7 @@
 
                 <div class="field">
                     <label class="label">Total credits/hours</label>
-                    <input type="text"  class="input" readonly>
+                    <input type="text"  class="input" readonly v-model="total_credits">
                 </div>
             </form>
 
