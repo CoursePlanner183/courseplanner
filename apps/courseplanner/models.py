@@ -57,7 +57,8 @@ db.define_table(
     Field("is_enrolled", type="boolean"),
     Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
     Field("year", type="integer"),
-    Field("final_grade", tyoe="string"),
+    Field("final_grade", type="string"),
+    Field("is_shared", type="boolean", default=False),
 )
 
 db.define_table(

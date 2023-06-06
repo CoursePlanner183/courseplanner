@@ -47,8 +47,7 @@ let init = (app) => {
 
             let lowest_year = Number.MAX_VALUE;
             for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].id;
-
+                courseid = app.vue.courses_taken[index].course_id;
                 /// Finds course from courses
                 course = null;
                 for (index in app.vue.courses) {
@@ -69,7 +68,7 @@ let init = (app) => {
 
             // Adds courses to planner
             for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].id;
+                courseid = app.vue.courses_taken[index].course_id;
 
                 // Finds course from courses
                 course = null;

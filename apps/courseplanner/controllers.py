@@ -43,11 +43,13 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
+    print(auth.user_id)
     return dict(
         courses=courses,
         add_course_url=URL('add_courses', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url = URL('edit_course', signer=url_signer),
+        share_courses_url= URL('share_courses', signer=url_signer),
     )
 
 @action('course/create', method=["GET", "POST"])
@@ -69,6 +71,23 @@ def get_courses():
         courses_taken=courses_taken,
         )
 
+@action('get_planners', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_planners():
+    user_id = request.params.get('user_id')
+    courses = db(db.course).select().as_list()
+    courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
+    return dict(
+        courses=courses,
+        courses_taken=courses_taken
+    )
+
+@action('share')
+@action.uses('share.html', db, auth.user, url_signer)
+def share():
+    return dict(
+        get_planners_url= URL('get_planners', signer=url_signer),
+    )
  
 @action('user/profile')
 @action.uses('user.html', db, auth.user, url_signer)
@@ -101,11 +120,15 @@ def add_courses():
     for courseId in courses_selected:
         if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
             return "Course is already taken"
-
+        data = db(db.course.id == courseId).select().as_list()
+        print(data)
+        print(courseId)
         db.course_taken.insert(
             course_id=courseId,
             is_enrolled=True,
-            user_id = auth.user_id
+            user_id = auth.user_id,
+            year = data[0]['year'],
+            season = data[0]['offering'],
         )
     return "ok"
 
@@ -169,6 +192,12 @@ def submit_grade():
     db(query).update(final_grade=grade)
     return dict(course_id=course_id, grade=grade)
 
+
+@action('share_courses', method="POST")
+@action.uses(db, auth.user, url_signer)
+def share_courses():
+    db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
+    return "ok"
 
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
