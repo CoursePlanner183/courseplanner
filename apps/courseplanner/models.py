@@ -75,7 +75,7 @@ db.define_table(
     Field("abbrevation", type='string'),
     Field("number", type="integer"),
     Field("description", type="text"),
-    Field("credits", type="float"),
+    Field("credits", type="integer"),
     Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
     Field("year","integer"),
     Field('created_by', 'reference auth_user', default=lambda: auth.user_id)
@@ -92,10 +92,21 @@ db.define_table(
 db.define_table(
     "course_taken",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
-    Field("course_id", "integer", "reference course",writable=False,readable=True),
+    Field("course_id", "reference course",writable=False,readable=True),
     Field("grade", "integer", "reference course",writable=False,readable=True),
-    Field("offering_taken",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
     Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
+    Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
+    Field("year", type="integer"),
+    Field("final_grade", tyoe="string"),
+)
+
+db.define_table(
+    "course_grade_categories",
+    Field("user_id", 'reference auth_user'),
+    Field("course_id", "reference course", writable=False, readable=True),
+    Field("category_name", type="string"),
+    Field("grade", type="float"),
+    Field("weight", type="float"),
 )
 
 db.student.id.writable = False

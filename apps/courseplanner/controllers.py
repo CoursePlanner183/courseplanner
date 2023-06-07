@@ -188,9 +188,6 @@ def calc():
     return dict()
 
 
-
-
-
 def add_california_schools():
     for school_name, abbr, state, state_abbr in csu_schools:
         school = db.school(name=school_name)
