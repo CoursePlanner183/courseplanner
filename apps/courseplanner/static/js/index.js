@@ -11,11 +11,7 @@ let init = (app) => {
         selectedCourses: [],
         deleteMode: false,
         selectedDelete: [],
-        planners: [],
-        currentPlanner: {},
     };
-
-    
 
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
@@ -40,8 +36,6 @@ let init = (app) => {
             app.init(); // Reload the data after deleting courses
         });
     };
-
-    
 
     // Checks if there are courses to add to planner. If there are, then adds courses and years.
     app.updatePlanner = function() {
