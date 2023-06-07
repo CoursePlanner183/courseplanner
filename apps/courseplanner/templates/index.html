@@ -4,6 +4,16 @@
     [v-cloak] {
         display: none;
     }
+
+    .subheader {
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    .subheader a {
+        text-decoration: underline;
+
+    }
 </style>
 
 
@@ -21,7 +31,7 @@
                         </a>
                     </h2>
                     <!-- Current courses list goes here -->
-                    <table id="table" class="table is-striped is-fullwidth" hidden>
+                    <table id="table" class="table is-striped is-fullwidth">
                         <thead>
                             <th></th>
                             <th>Fall</th>
@@ -36,27 +46,27 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <tr id="second_year">
-                                    <td class="has-text-weight-bold">2nd Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="third_year">
-                                    <td class="has-text-weight-bold">3rd Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="fourth_year">
-                                    <td class="has-text-weight-bold">4th Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                            <tr id="second_year">
+                                <td class="has-text-weight-bold">2nd Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr id="third_year">
+                                <td class="has-text-weight-bold">3rd Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr id="fourth_year">
+                                <td class="has-text-weight-bold">4th Year</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         </tbody>
                     </table>
                     <h2 id="no_table">Add a course to your planner.</h3>
@@ -70,6 +80,9 @@
             <section class="section">
                 <div class="container">
                     <h2 class="subtitle">Courses</h2>
+                    <div class="subheader">
+                        Don't see your course? <a href='[[=URL("courses/create")]]'>Create one here</a>.
+                    </div>
                     <div class="field has-addons">
                         <div class="control is-expanded">
                             <input class="input" type="text" placeholder="Search for previous courses">
@@ -111,21 +124,15 @@
 
                     <a class="button is-success clickable" @click="addcourses()">
                         <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
+                            <i class="fa fa-plus"></i>
+                        </span>
                         <span>Add Course</span>
-                    </a>
-                    <a class="button is-info" href='[[=URL("course/create")]]'>
-                        <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
-                        <span>Create Course</span>
                     </a>
 
                     <a class="button is-warning" @click="deleteMode=!deleteMode">
                         <span class="icon">
-              <i class="fa fa-exclamation-triangle"></i>
-            </span>
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </span>
                         <span>Delete Courses</span>
                     </a>
                     <div v-if="deleteMode">
@@ -134,17 +141,18 @@
                                 <div v-if="ct.course_id==course.id">
                                     <div class="level-right">
                                         <label class="checkbox">
-                      <input type="checkbox"  v-model="selectedDelete" :id="course.name" :value="course.id">
-                        {{course.name}}
-                    </label>
+                                            <input type="checkbox" v-model="selectedDelete" :id="course.name"
+                                                :value="course.id">
+                                            {{course.name}} 
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <a class="button is-danger" @click="deleteMode=!deleteMode; deleteCourses()">
                             <span class="icon">
-                <i class="fa fa-times-circle"></i>
-              </span>
+                                <i class="fa fa-times-circle"></i>
+                            </span>
                             <span>Delete Selected Courses</span>
                         </a>
                     </div>
@@ -152,7 +160,7 @@
 
             </section>
 
-            </div>
+        </div>
 
 
 
