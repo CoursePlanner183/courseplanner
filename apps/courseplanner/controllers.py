@@ -221,22 +221,7 @@ def edit_course():
 @action("course/search", method="GET")
 @action.uses(db, auth.user)
 def search_course():
-    courses_selected = request.json.get('courses_selected')
-    assert courses_selected is not None
-    for courseId in courses_selected:
-        if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
-            return "Course is already taken"
-        data = db(db.course.id == courseId).select().as_list()
-        print(data)
-        print(courseId)
-        db.course_taken.insert(
-            course_id=courseId,
-            is_enrolled=True,
-            user_id = auth.user_id,
-            year = data[0]['year'],
-            season = data[0]['offering'],
-        )
-    return "ok"
+    return dict()
 
 @action("course/add", method="POST")
 @action.uses(db, auth.user)
