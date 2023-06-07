@@ -46,14 +46,14 @@ def index():
     print(auth.user_id)
     return dict(
         courses=courses,
-        add_course_url=URL('add_courses', signer=url_signer),
+        add_course_url=URL('course/add', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
-        edit_course_url=URL('edit_course', signer=url_signer),
+        edit_course_url=URL('course/edit', signer=url_signer),
         share_courses_url= URL('share_courses', signer=url_signer),
     )
 
 
-@action('courses/create', method=["GET", "POST"])
+@action('course/create', method=["GET", "POST"])
 @action.uses('course.html', db, auth.user, url_signer)
 def create_course():
     form = Form(db.course, deletable=False, formstyle=FormStyleBulma)
@@ -75,7 +75,7 @@ def get_courses():
         courses_taken=courses_taken,
     )
 
-@action('courses/all', method=["GET"])
+@action('course/all', method=["GET"])
 @action.uses('courses_list.html', db, auth.user, url_signer)
 def course_list():
     user = auth.get_user()
@@ -102,7 +102,7 @@ def share():
         get_planners_url= URL('get_planners', signer=url_signer),
     )
 
-@action('courses/history', method=["GET", "POST"])
+@action('course/history', method=["GET", "POST"])
 @action.uses('course_history.html', db, auth.user, url_signer)
 def course_history():
     user = auth.get_user()
@@ -218,9 +218,27 @@ def edit_course():
     return dict(form=form, course_id=course_id)
 
 
+@action("course/search", method="GET")
+@action.uses(db, auth.user)
+def search_course():
+    courses_selected = request.json.get('courses_selected')
+    assert courses_selected is not None
+    for courseId in courses_selected:
+        if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
+            return "Course is already taken"
+        data = db(db.course.id == courseId).select().as_list()
+        print(data)
+        print(courseId)
+        db.course_taken.insert(
+            course_id=courseId,
+            is_enrolled=True,
+            user_id = auth.user_id,
+            year = data[0]['year'],
+            season = data[0]['offering'],
+        )
+    return "ok"
 
-
-@action("add_courses", method="POST")
+@action("course/add", method="POST")
 @action.uses(db, auth.user)
 def add_courses():
     courses_selected = request.json.get('courses_selected')

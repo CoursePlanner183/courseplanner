@@ -72,6 +72,7 @@ db.define_table(
 
 db.define_table(
     "course",
+    Field("name", type='string'),
     Field("abbrevation", type='string'),
     Field("number", type="integer"),
     Field("description", type="text"),
