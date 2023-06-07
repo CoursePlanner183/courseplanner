@@ -89,17 +89,26 @@ def share():
         get_planners_url= URL('get_planners', signer=url_signer),
     )
  
-@action('user/profile')
+@action('user/profile', method=["GET","POST"])
 @action.uses('user.html', db, auth.user, url_signer)
 def profile():
-    user = auth.get_user()
-    Fields = []
-    for field in db.auth_user:
-        Fields.append(field)
-    Fields.append(Field('grad_date', type='date'))
-    Fields.append(Field('School', type='string',requires=IS_IN_SET(csu_schools + uc_schools)))
-    form = Form(Fields,deletable=False, formstyle=FormStyleBulma)
-    return dict(form=form)
+    if request.method == "POST":
+        student = { k: v for k, v in request.forms.items() if k in ['id', 'user_id', 'school_id', 'major', 'grad_start_date', 'grad_end_date']}
+        db.student(student["id"]).update_record(
+            school_id=student["school_id"],
+            major=student["major"],
+            grad_start_date=student["grad_start_date"],
+            grad_end_date=student["grad_end_date"]
+        )
+        user = { k: v for k, v in request.forms.items() if k in ["email", "first_name", "last_name"]}
+        db.auth_user(auth.user_id).update_record(
+            email=user["email"],
+            first_name=user["first_name"],
+            last_name=user["last_name"],
+        )
+        redirect(URL('user/profile'))
+    return dict()
+
 
 @action('edit_course', method=["GET", "POST"])
 @action.uses('edit_course.html', db, session, auth.user, url_signer)
@@ -153,8 +162,6 @@ def edit_course():
         redirect(URL('index'))
 
     return dict(form=form, course_id=course_id)
-
-
 
 
 @action("add_courses", method="POST")
@@ -238,55 +245,22 @@ def submit_grade():
     return dict(course_id=course_id, grade=grade)
 
 
+@action('universities')
+@action.uses(db, auth.user, url_signer)
+def universities():
+    schools = db(db.school).select().as_list()
+    return dict(schools=schools)
+
+@action('me')
+@action.uses(db, auth.user, url_signer)
+def me():
+    query = (db.auth_user.id == auth.user_id) & (db.auth_user.id == db.student.user_id)
+    x = db(query).select().as_list()[0]
+    return { **x["auth_user"], **x["student"] }
+
+
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
     db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
     return "ok"
-
-csu_schools = [
-    ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
-    ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
-    ('California State University, Chico', 'CSUC', 'California', 'CA'),
-    ('California State University, Dominguez Hills', 'CSUDH', 'California', 'CA'),
-    ('California State University, East Bay', 'CSUEB', 'California', 'CA'),
-    ('California State University, Fresno', 'CSUF', 'California', 'CA'),
-    ('California State University, Fullerton', 'CSUF', 'California', 'CA'),
-    ('California State University, Long Beach', 'CSULB', 'California', 'CA'),
-    ('California State University, Los Angeles', 'CSULA', 'California', 'CA'),
-    ('California State University, Maritime Academy', 'CSUMA', 'California', 'CA'),
-    ('California State University, Monterey Bay', 'CSUMB', 'California', 'CA'),
-    ('California State University, Northridge', 'CSUN', 'California', 'CA'),
-    ('California State University, Sacramento', 'CSUS', 'California', 'CA'),
-    ('California State University, San Bernardino', 'CSUSB', 'California', 'CA'),
-    ('California State University, San Marcos', 'CSUSM', 'California', 'CA'),
-    ('California State University, Stanislaus', 'CSUS', 'California', 'CA'),
-    # Add more CSU schools as needed
-]
-uc_schools = [
-        ('University of California, Berkeley', 'UCB', 'California', 'CA'),
-        ('University of California, Davis', 'UCD', 'California', 'CA'),
-        ('University of California, Irvine', 'UCI', 'California', 'CA'),
-        ('University of California, Los Angeles', 'UCLA', 'California', 'CA'),
-        ('University of California, Merced', 'UCM', 'California', 'CA'),
-        ('University of California, Riverside', 'UCR', 'California', 'CA'),
-        ('University of California, San Diego', 'UCSD', 'California', 'CA'),
-        ('University of California, San Francisco', 'UCSF', 'California', 'CA'),
-        ('University of California, Santa Barbara', 'UCSB', 'California', 'CA'),
-        ('University of California, Santa Cruz', 'UCSC', 'California', 'CA'),
-        # Add more UC schools as needed
-]
-def add_california_schools():
-    for school_name, abbr, state, state_abbr in csu_schools:
-        school = db.school(name=school_name)
-        if school:
-            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
-        else:
-            db.school.insert(name=school_name, abbr=abbr, state=state, state_abbr=state_abbr)
-
-    for school_name, abbr, state, state_abbr in uc_schools:
-        school = db.school(name=school_name)
-        if school:
-            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
-        else:
-            db.school.insert(name=school_name, abbr=abbr, state=state, state_abbr=state_abbr)

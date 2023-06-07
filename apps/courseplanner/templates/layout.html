@@ -52,7 +52,6 @@
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item" href="[[=URL('grades/calculator')]]">Calculate</a>
-              <a class="navbar-item" href="[[=URL('user/profile')]]">Profile</a>
             </div>
           </div>
         </div>
@@ -66,9 +65,10 @@
                     [[=globals().get('user').get('username')]]
                   </a>
                   <div class="navbar-dropdown is-right">
-                    <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
-                    <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile</a>
+                    <a class="navbar-item" href="[[=URL('user/profile')]]">Profile</a>
+                    <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile 2</a>
                     <a class="navbar-item " href="[[=URL('auth/change_password')]]">Change Password</a></li>
+                    <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
                   </div>
                 </div>
               [[else:]]
