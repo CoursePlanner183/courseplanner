@@ -81,27 +81,18 @@
 
                     <table class="table is-striped is-fullwidth">
                         <tbody>
-                            <tr v-for="course in courses" :key="course.id">
+                            <tr v-for="course in courses">
                                 <td>
                                     <div class="field has-addons">
                                         <div class="level-right">
                                             <label class="checkbox mr-6">
-                                                <input type="checkbox" v-model="selectedCourses" :id="course.name" :value="course.id">
-                                                {{course.name}}
+                                              <input type="checkbox"  v-model="selectedCourses" :id="course.name" :value="course.id">
+                                              {{course.name}}
                                             </label>
-                                            <!-- Update the Edit button anchor tag -->
-                                            <form method="POST" action="[[=URL('edit_course')]]">
-                                                <input type="hidden" name="course_id" :value="course.id">
-                                                <input type="hidden" name="name" :value="course.name">
-                                                <input type="hidden" name="number" :value="course.number">
-                                                <input type="hidden" name="credits" :value="course.credits">
-                                                <input type="hidden" name="offering" :value="course.offering">
-                                                <input type="hidden" name="year" :value="course.year">
-                                                <button type="submit" class="button is-light">
-                                                    <span class="icon"><i class="fa fa-fw fa-pencil"></i></span>
-                                                    <span>Edit</span>
-                                                </button>
-                                            </form>
+                                            <a class="button is-light" href='[[=URL("course/edit")]]'>
+                                                <span class="icon "><i class="fa fa-fw fa-pencil"></i></span>
+                                                <span>Edit</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </td>
