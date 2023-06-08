@@ -5,39 +5,30 @@
 
 <div class="section is-half"" id="vue-target" v-cloak>
 
-<section class="section">
-    <div class="container">
-        <h1 class="title">Course Search</h1>
-        <div id="app">
-        <div class="field">
-            <label class="label">Search:</label>
-            <div class="control">
-            <input class="input" type="text" v-model="searchText" placeholder="Enter search text">
-            </div>
-        </div>
-        <div class="field">
-            <label class="label">Offering:</label>
-            <div class="control">
-            <div class="select is-multiple">
-                <select multiple v-model="selectedOfferings">
-                <option v-for="offering in offerings" :value="offering">{{ offering }}</option>
-                </select>
-            </div>
-            </div>
-        </div>
-        <button class="button is-primary" @click="searchCourses">Search</button>
-        <div class="content">
-            <h2 class="title is-4">Search Results:</h2>
-            <ul>
-            <li v-for="course in searchResults">
-                <strong>{{ course.name }}</strong> ({{ course.abbreviation }})<br>
-                {{ course.description }}
-            </li>
-            </ul>
-        </div>
-        </div>
-    </div>
-    </section>
+    <table id="table" class="table is-striped is-fullwidth">
+        <thead>
+            <th><abbr title="Abbreviation">Abbr</abbr></th>
+            <th>Number</th>
+            <th>Description</th>
+            <th>Credit</th>
+            <th>Offering</th>
+            <th class="clickable has-text-link" style="text-decoration:underline;">Year offered</th>
+        </thead>
+        <tbody>
+            [[for row in rows:]]
+            <tr>
+                <td>[[=row.abbreviation]]</td>
+                <td>[[=row.number]]</td>
+                <td>[[=row.description]]</td>
+                <td>[[=row.credits]]</td>
+                <td>[[=row.offering]]</td>
+                <td>[[=row.year]]</td>
+    
+            </tr>
+            [[pass]]
+    
+        </tbody>
+    </table>
 
     
 </div>

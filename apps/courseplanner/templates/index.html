@@ -14,6 +14,11 @@
         text-decoration: underline;
 
     }
+
+    .hide,
+    .hidden {
+        display: none;
+    }
 </style>
 
 
@@ -21,7 +26,7 @@
 
     <div class="columns">
 
-        <div class="column">
+        <div class="column" hidden>
             <section class="section">
                 <div class="container">
                     <h2 id="planner_name" class="subtitle">
@@ -76,8 +81,8 @@
         </div>
 
 
-        <div class="column is-one-third has-background-light">
-            <section class="section">
+        <div class="column is-one-third has-background-light hide">
+            <section class="section" hidden>
                 <div class="container">
                     <h2 class="subtitle">Courses</h2>
                     <div class="subheader">
@@ -99,7 +104,8 @@
                                     <div class="field has-addons">
                                         <div class="level-right">
                                             <label class="checkbox mr-6">
-                                                <input type="checkbox" v-model="selectedCourses" :id="course.name" :value="course.id">
+                                                <input type="checkbox" v-model="selectedCourses" :id="course.name"
+                                                    :value="course.id">
                                                 {{course.name}}
                                             </label>
                                             <!-- Update the Edit button anchor tag -->
@@ -143,7 +149,7 @@
                                         <label class="checkbox">
                                             <input type="checkbox" v-model="selectedDelete" :id="course.name"
                                                 :value="course.id">
-                                            {{course.name}} 
+                                            {{course.name}}
                                         </label>
                                     </div>
                                 </div>
@@ -165,16 +171,16 @@
 
 
 
-        </div>
     </div>
-    [[block page_scripts]]
-    <!-- Loads the index-specific js for Vue -->
-    <script>
-        let add_course_url = "[[=XML(add_course_url)]]";
-        let delete_course_url = "[[=XML(delete_course_url)]]";
-        let edit_course_url = "[[=XML(edit_course_url)]]";
-        let share_courses_url = "[[=XML(share_courses_url)]]";
-    </script>
-    <script src="js/index.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>
-    [[end]]
+</div>
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+    let add_course_url = "[[=XML(add_course_url)]]";
+    let delete_course_url = "[[=XML(delete_course_url)]]";
+    let edit_course_url = "[[=XML(edit_course_url)]]";
+    let share_courses_url = "[[=XML(share_courses_url)]]";
+</script>
+<script src="js/index.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>
+[[end]]
