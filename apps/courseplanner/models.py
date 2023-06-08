@@ -54,7 +54,7 @@ db.define_table(
 
 db.define_table(
     "course_taken",
-    Field("user_id", 'reference auth_user',writable=False,readable=True),
+    Field("user_id", 'reference auth_user', default=get_user_email, writable=False, readable=True),
     Field("course_id", "reference course",writable=False,readable=True),
     Field("is_enrolled", type="boolean"),
     Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
@@ -74,7 +74,7 @@ db.define_table(
 # temp table, can be added to student once forced profiles can be worked out.
 db.define_table(
     "shared_planner",
-    Field("user_id", 'reference auth_user'),
+    Field("user_id", 'reference auth_user', default=get_user_email),
     Field("name", type="string")
 )
 
