@@ -128,10 +128,12 @@ def share():
 @action.uses('course_history.html', db, auth.user, url_signer)
 def course_history():
     user = auth.get_user()
-    rows = db(db.course.created_by == user["id"]).select()
+    rows = db(db.course_taken.user_id == user["id"]).select(db.course_taken.ALL, db.course.ALL,
+                                                      join=db.course_taken.on(db.course_taken.course_id == db.course.id))
     for row in rows:
-        print("rows is ", row["offering"])
-        row["offering"] = ", ".join(row["offering"])
+        print("course taken is:",row["course_taken"])
+        print("\nCourse is", row["course"],"\n\n")
+        row["course"]["offering"] = ", ".join(row["course"]["offering"])
     return dict(rows=rows)
 
 
@@ -151,7 +153,7 @@ def profile():
             email=user["email"],
             first_name=user["first_name"],
             last_name=user["last_name"],
-        )
+        )   
         redirect(URL('user/profile'))
     return dict()
 
@@ -317,6 +319,17 @@ def delete_course(courseId=None):
         return "Cannot delete course that you have not created."
     db(db.course.id == courseId).delete()
     return "ok"
+
+@action("course/taken/delete/<course_takenId:int>", method="DELETE")
+@action.uses(db, session,auth.user)
+def delete_course_taken(course_takenId=None):
+    assert course_takenId is not None
+    query = db(db.course_taken.id == course_takenId).select().first()
+    if query["user_id"] != auth.user_id:
+        redirect(URL('course/history'))
+        #return "Cannot delete enrollment that you have not created."
+    db(db.course_taken.id == course_takenId).delete()
+    redirect(URL('course/history'))
     
 @action("delete_courses", method="POST")
 @action.uses(db, auth.user)

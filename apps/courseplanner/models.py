@@ -115,7 +115,7 @@ db.define_table(
     "course_taken",
     Field("user_id", 'reference auth_user',writable=False,readable=True, default=lambda: auth.user_id),
     Field("course_id", "reference course",writable=False,readable=True),
-    Field("grade", "integer", "reference course",writable=False,readable=True),
+    Field("grade", "integer", "reference course",default=100,writable=False,readable=True),
     Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
     Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
     Field("year", type="integer"),

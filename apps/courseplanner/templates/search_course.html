@@ -62,7 +62,7 @@
                 <div class="modal">
                   <div class="modal-content">
                     <div class="contact-form">
-                      <span class="close" @click="toggleCourseBox( [[=row.id]])">&times;</span>
+                      <span class="close has-text-danger" @click="toggleCourseBox( [[=row.id]])">&times;</span>
                       <h2>Add "[[=row.name]]" to planner</h2>
                       <!-- Course offering and enrollment status inputs -->
                       <div class="field">
@@ -111,6 +111,9 @@
 
   [[block page_styles]]
   <style>
+    [v-cloak] {
+            display: none;
+        }
     .section {
       display: flex;
       justify-content: center;

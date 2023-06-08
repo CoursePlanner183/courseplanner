@@ -24,7 +24,6 @@ let init = (app) => {
         axios.get(`../course/add/${courseId}`, {params: {offering: this.selectedOffering, enrollmentStatus: this.selectedEnrollmentStatus}} )
             .then(response => {
                 // Handle the response here (e.g., display a success message)
-                console.log(response.data);
                 const element = this.$refs[courseId+"-add"];
                 element.remove();
                 this.toggleCourseBox(courseId);
@@ -38,7 +37,6 @@ let init = (app) => {
         
         axios.delete(`../course/delete/${courseId}`)
             .then(response => {
-                console.log(response.data);
                 const element = this.$refs[courseId+"-card"];
                 element.remove();
             })
@@ -79,7 +77,6 @@ let init = (app) => {
 
     // This initializes it.
     app.init = () => {
-        console.log("SS is " + app.vue.ShowSearch);
     };
 
     // Call the initializer.
