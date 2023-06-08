@@ -6,6 +6,9 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         ShowSearch: true,
+        selectedCourseId: undefined,
+        selectedOffering: '',
+        selectedEnrollmentStatus: '',
     };
 
     app.Search = () => {
@@ -18,12 +21,13 @@ let init = (app) => {
         app.vue.ShowSearch = true;
     }
     app.addCourse = function (courseId) {
-        axios.get(`../course/add/${courseId}`)
+        axios.get(`../course/add/${courseId}`, {params: {offering: this.selectedOffering, enrollmentStatus: this.selectedEnrollmentStatus}} )
             .then(response => {
                 // Handle the response here (e.g., display a success message)
                 console.log(response.data);
                 const element = this.$refs[courseId+"-add"];
                 element.remove();
+                this.toggleCourseBox(courseId);
             })
             .catch(error => {
                 console.error(error);
@@ -49,6 +53,20 @@ let init = (app) => {
         OpenSearch: app.OpenSearch,
         addCourse: app.addCourse,
         deleteCourse: app.deleteCourse,
+        toggleCourseBox(courseId) {
+            if (this.selectedCourseId === courseId) {
+              this.selectedCourseId = null;
+              this.selectedOffering = '';
+              this.selectedEnrollmentStatus = '';
+            } else {
+              this.selectedCourseId = courseId;
+            }
+          },
+          openAddCourseBox(courseId,offering) {
+            this.selectedCourseId = courseId;
+            this.selectedOffering = offering;
+            this.selectedEnrollmentStatus = "Enrolled";
+          }
     };
 
     // This creates the Vue instance.

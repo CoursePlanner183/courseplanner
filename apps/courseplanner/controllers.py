@@ -274,6 +274,7 @@ def add_courses():
         data = db(db.course.id == courseId).select().as_list()
         print(data)
         print(courseId)
+        
         db.course_taken.insert(
             course_id=courseId,
             is_enrolled=True,
@@ -283,19 +284,24 @@ def add_courses():
         )
     return "ok"
 
-@action("course/add/<courseId:int>")
+@action("course/add/<courseId:int>", method="GET")
 @action.uses(db, session,auth.user)
 def add_course(courseId=None):
     assert courseId is not None
+    print("request is ",request)
+    print("request.json is ",request.query)
+    offeringSelected = request.query.get('offering')
+    enrollmentStatus = request.query.get('enrollmentStatus')
     if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
         return "Course is already taken"
     data = db(db.course.id == courseId).select().as_list()
     db.course_taken.insert(
         course_id=courseId,
-        is_enrolled=True,
         user_id = auth.user_id,
         year = data[0]['year'],
-        season = data[0]['offering'],
+        season = offeringSelected,
+        status=enrollmentStatus,
+        is_enrolled=True if enrollmentStatus == "Enrolled" else False,
     )
     print("ADDED COURSE")
     #redirect(URL("course/search"))
