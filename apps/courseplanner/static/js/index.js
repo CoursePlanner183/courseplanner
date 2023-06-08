@@ -104,11 +104,17 @@ let init = (app) => {
         }
     };
 
+    // Set is_shared to true for all courses in course_taken from user
+    app.share_courses = async function() {
+        axios.post(share_courses_url);
+    };
+
     // This contains all the methods.
     app.methods = {
         addcourses: app.addcourses,
         updatePlanner: app.updatePlanner,
         deleteCourses: app.deleteCourses,
+        share_courses: app.share_courses,
     };
 
     // This creates the Vue instance.

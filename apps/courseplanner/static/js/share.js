@@ -11,6 +11,7 @@ let init = (app) => {
         year2: [],
         year3: [],
         year4: [],
+        users: [],
     };    
     
     app.enumerate = (a) => {
@@ -129,7 +130,7 @@ let init = (app) => {
 
     // This contains all the methods.
     app.methods = {
-        getPlanners: app.getPlanners
+        getPlanners: app.getPlanners,
     };
 
     // This creates the Vue instance.
@@ -142,6 +143,9 @@ let init = (app) => {
     // And this initializes it.
     app.init = () => {
         // Todo: get list of users who shared
+        axios.get(get_shared_users_url).then(function (response) {
+            app.vue.users = app.enumerate(response.data.users);
+        });
     };
 
     // Call to the initializer.

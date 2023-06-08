@@ -79,6 +79,7 @@ def get_planners():
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
+    print(db.student)
     return dict(
         courses=courses,
         courses_taken=courses_taken
@@ -89,6 +90,7 @@ def get_planners():
 def share():
     return dict(
         get_planners_url= URL('get_planners', signer=url_signer),
+        get_shared_users_url= URL('get_shared_users', signer=url_signer),
     )
  
 @action('user/profile', method=["GET","POST"])
@@ -264,5 +266,14 @@ def me():
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
+    curr_user = db(db.auth_user.id == auth.user_id).select().as_list()
+    username = curr_user[0]['username']
+    db.shared_planner.update_or_insert(user_id=auth.user_id, name=username)
     return "ok"
+
+
+@action('get_shared_users', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_shared_users():
+    users = db(db.shared_planner.user_id != auth.user_id).select().as_list()
+    return dict(users=users)

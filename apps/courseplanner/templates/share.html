@@ -62,14 +62,17 @@
           </span>
         </p>
       </div>
-
-      <div class="field has-addons">
-        <p class="control">
-          <button @click="getPlanners(1)" class="button">
-            <span>TODO: Get users, button for their IDs.</span>
-          </button>
-        </p>
+      
+      <div v-for="u in users">
+        <div class="field has-addons mb-3">
+            <p class="control">
+                <button @click="getPlanners(u.user_id)" class="button">
+                <span>{{u.name}}</span>
+                </button>
+            </p>
+        </div>
       </div>
+      
 
     </div>
   </div>
@@ -81,6 +84,7 @@
 <!-- Loads the index-specific js for Vue -->
 <script>
   let get_planners_url = "[[=XML(get_planners_url)]]";
+  let get_shared_users_url = "[[=XML(get_shared_users_url)]]"
 </script>
 <script src="js/share.js"></script>
 [[end]]
