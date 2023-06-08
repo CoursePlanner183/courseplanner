@@ -33,7 +33,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from py4web.utils.form import Form, FormStyleDefault, FormStyleBulma, SelectWidget,CheckboxWidget,RadioWidget
-from .models import get_username, csu_schools, uc_schools
+from .models import insert_random_courses, get_username, csu_schools, uc_schools
 from pydal.validators import *
 
 url_signer = URLSigner(session)
@@ -43,6 +43,9 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
+    #db(db.course).delete()
+    #db(db.course_taken).delete()
+    #insert_random_courses(20)
     print(auth.user_id)
     return dict(
         courses=courses,
@@ -58,10 +61,26 @@ def index():
 def create_course():
     form = Form(db.course, deletable=False, formstyle=FormStyleBulma)
     form.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
+    form.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
     if form.accepted:
         redirect(URL("index"))
     return dict(form=form)
 
+@action('course/edit/<courseId:int>', method=["GET", "POST"])
+@action.uses('course.html', db, session, auth.user, url_signer)
+def edit_course(courseId=None):
+    assert courseId is not None
+    course = db.course[courseId]
+    if(course.created_by != auth.user_id):
+        redirect(URL('index'))
+    if course is None:
+        redirect(URL('index'))
+    form = Form(db.course,record=course,deletable=False,formstyle=FormStyleBulma,csrf_session=session)
+    form.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
+    form.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
+    if form.accepted:
+        redirect(URL("index"))
+    return (dict(form=form))
 
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
@@ -172,7 +191,6 @@ def edit_course():
         course = db.course(course_id)
         if course is None:
             redirect(URL('index'))
-
         form = Form(
             [
                 Field("name", default=course.name, type='string'),
@@ -217,11 +235,60 @@ def edit_course():
 
     return dict(form=form, course_id=course_id)
 
-
-@action("course/search", method="GET")
-@action.uses(db, auth.user)
+@action("course/search", method=["GET","POST"])
+@action.uses('search_course.html',db,session, auth.user)
 def search_course():
-    return dict()
+    results = []
+    searchForm = Form(
+        [
+            Field("course_name", default=request.forms.get('course_name'), type='string'),
+            Field("course_number", default=request.forms.get('course_number'), type="integer"),
+            Field("credits", default=request.forms.get('credits'), type="integer"),
+            Field("offering",default=request.forms.get('offering'),type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
+            Field("year", default=request.forms.get('year'), type="integer"),
+        ],
+        csrf_session=session,
+        formstyle=FormStyleBulma,
+    )
+
+    #Edit form variables
+    searchForm.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
+    searchForm.structure.find('[name=year]')[0]['_type'] = 'number'
+    searchForm.custom.submit['_@click'] = 'Search()'  # Add custom inline CSS styles to the button
+    #print(searchForm.structure)
+   # searchForm.structure.find('form')[0]['_v-on:submit.prevent']= 'search'
+    searchForm.structure.find('form')[0]['_id']= 'searchFormId'
+    searchForm.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
+    #print("\n\n", searchForm.structure.find('form')[0], "\n\n")
+    
+    #print("searchForm.custom.submit is", searchForm.custom.submit)
+    ShowSearch = True
+    if searchForm.accepted:
+        query = None
+        print("vars are", searchForm.vars)
+        if searchForm.vars['course_name'] != None or searchForm.vars["course_name"] != '':
+            query = db.course.name == searchForm.vars['course_name']
+        if searchForm.vars['course_number'] != None and searchForm.vars['course_number'] != '':
+            query = query | (db.course.number == searchForm.vars['course_number'])
+        if searchForm.vars['credits'] != None and searchForm.vars['credits'] != '':
+            query = query | (db.course.credits == searchForm.vars['credits'])
+        if searchForm.vars['offering'] != None and searchForm.vars['offering'] != '':
+            query = query | (db.course.offering == searchForm.vars['offering'])
+        if searchForm.vars['year'] != None and searchForm.vars['year'] != '':
+            query = query | (db.course.year == searchForm.vars['year'])
+        if(query != None):
+            #query = query | db.course.created_by == auth.user_id
+            results = db(query).select()
+        for result in results:
+            #Check to see if user is owner of course, if so allow course editing
+            result["is_owner"] = result["created_by"] == auth.user_id
+            #Check to see if user is enrolled in course, if so prevent deletion and also prevent adding to planner
+            is_not_enrolled = len(db((db.course_taken.course_id == result["id"]) & (db.course_taken.user_id == auth.user_id)).select().as_list()) == 0
+            result["is_not_enrolled"] = is_not_enrolled
+        print("query is ",query)
+        print("results are ",results)
+        ShowSearch = False
+    return dict(searchForm=searchForm,results=results,ShowSearch=ShowSearch)
 
 @action("course/add", method="POST")
 @action.uses(db, auth.user)
@@ -243,7 +310,35 @@ def add_courses():
         )
     return "ok"
 
+@action("course/add/<courseId:int>")
+@action.uses(db, session,auth.user)
+def add_course(courseId=None):
+    assert courseId is not None
+    if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
+        return "Course is already taken"
+    data = db(db.course.id == courseId).select().as_list()
+    db.course_taken.insert(
+        course_id=courseId,
+        is_enrolled=True,
+        user_id = auth.user_id,
+        year = data[0]['year'],
+        season = data[0]['offering'],
+    )
+    print("ADDED COURSE")
+    #redirect(URL("course/search"))
+    return "ok"
 
+@action("course/delete/<courseId:int>",method="DELETE")
+@action.uses(db, session,auth.user)
+def delete_course(courseId=None):
+    assert courseId is not None
+    if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
+        return "Cannot delete course that you have enrolled in."
+    if db(db.course.created_by == auth.user_id).select().as_list() == []:
+        return "Cannot delete course that you have not created."
+    db(db.course.id == courseId).delete()
+    return "ok"
+    
 @action("delete_courses", method="POST")
 @action.uses(db, auth.user)
 def delete_courses():
@@ -311,38 +406,6 @@ def share_courses():
     db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
     return "ok"
 
-csu_schools = [
-    ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
-    ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
-    ('California State University, Chico', 'CSUC', 'California', 'CA'),
-    ('California State University, Dominguez Hills', 'CSUDH', 'California', 'CA'),
-    ('California State University, East Bay', 'CSUEB', 'California', 'CA'),
-    ('California State University, Fresno', 'CSUF', 'California', 'CA'),
-    ('California State University, Fullerton', 'CSUF', 'California', 'CA'),
-    ('California State University, Long Beach', 'CSULB', 'California', 'CA'),
-    ('California State University, Los Angeles', 'CSULA', 'California', 'CA'),
-    ('California State University, Maritime Academy', 'CSUMA', 'California', 'CA'),
-    ('California State University, Monterey Bay', 'CSUMB', 'California', 'CA'),
-    ('California State University, Northridge', 'CSUN', 'California', 'CA'),
-    ('California State University, Sacramento', 'CSUS', 'California', 'CA'),
-    ('California State University, San Bernardino', 'CSUSB', 'California', 'CA'),
-    ('California State University, San Marcos', 'CSUSM', 'California', 'CA'),
-    ('California State University, Stanislaus', 'CSUS', 'California', 'CA'),
-    # Add more CSU schools as needed
-]
-uc_schools = [
-        ('University of California, Berkeley', 'UCB', 'California', 'CA'),
-        ('University of California, Davis', 'UCD', 'California', 'CA'),
-        ('University of California, Irvine', 'UCI', 'California', 'CA'),
-        ('University of California, Los Angeles', 'UCLA', 'California', 'CA'),
-        ('University of California, Merced', 'UCM', 'California', 'CA'),
-        ('University of California, Riverside', 'UCR', 'California', 'CA'),
-        ('University of California, San Diego', 'UCSD', 'California', 'CA'),
-        ('University of California, San Francisco', 'UCSF', 'California', 'CA'),
-        ('University of California, Santa Barbara', 'UCSB', 'California', 'CA'),
-        ('University of California, Santa Cruz', 'UCSC', 'California', 'CA'),
-        # Add more UC schools as needed
-]
 def add_california_schools():
     for school_name, abbr, state, state_abbr in csu_schools:
         school = db.school(name=school_name)

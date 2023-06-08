@@ -4,6 +4,7 @@ This file defines the database models
 
 import datetime
 import random
+import string
 from py4web.utils.populate import FIRST_NAMES, LAST_NAMES, IUP
 from .common import db, Field, auth
 from pydal.validators import *
@@ -73,16 +74,18 @@ db.define_table(
 db.define_table(
     "course",
     Field("name", type='string'),
-    Field("abbrevation", type='string'),
+    Field("abbreviation", type='string'),
     Field("number", type="integer"),
     Field("description", type="text"),
     Field("credits", type="integer"),
+    Field("instructor", type="string"),
     Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
     Field("year","integer"),
     Field('created_by', 'reference auth_user', default=lambda: auth.user_id)
 )
 
 db.course.created_by.readable = db.course.created_by.writable = False
+db.course.id.readable = db.course.id.writable = False
 db.define_table(
     "student",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
@@ -92,7 +95,7 @@ db.define_table(
 
 db.define_table(
     "course_taken",
-    Field("user_id", 'reference auth_user',writable=False,readable=True),
+    Field("user_id", 'reference auth_user',writable=False,readable=True, default=lambda: auth.user_id),
     Field("course_id", "reference course",writable=False,readable=True),
     Field("grade", "integer", "reference course",writable=False,readable=True),
     Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
@@ -104,7 +107,7 @@ db.define_table(
 
 db.define_table(
     "course_grade_categories",
-    Field("user_id", 'reference auth_user'),
+    Field("user_id", 'reference auth_user', default=lambda: auth.user_id),
     Field("course_taken_id", "reference course_taken", writable=False, readable=True),
     Field("category_name", type="string"),
     Field("grade", type="float"),
@@ -112,9 +115,41 @@ db.define_table(
 )
 
 db.student.id.writable = False
-db.course.id.writable = False
+
 db.commit()
 
 
+def generate_random_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for _ in range(length))
+
+def generate_random_course():
+    course_types = ['ART', 'BIO', 'CHEM', 'CSE', 'ENG', 'HIST', 'MATH', 'PHYS', 'PSYC']
+    professors = ["John Doe", "Jane Smith", "David Johnson", "Emily Davis", "Michael Brown"]
+    name = generate_random_string(8) + " Course"
+    abbreviation = random.choice(course_types)
+    professor = random.choice(professors)
+    description = generate_random_string(20) + " Lorem ipsum dolor sit amet."
+    credits = random.randint(1, 5)
+    number = random.randint(1, 500)
+    offering = random.sample(['Fall', 'Winter', 'Spring', 'Summer'], random.randint(1, 4))
+    year = 2023
+    
+    return {
+        'name': name,
+        'abbreviation': abbreviation,
+        'number': number,
+        'description': description,
+        'instructor': professor,
+        'credits': credits,
+        'offering': offering,
+        'year': year
+    }
+
+def insert_random_courses(num_courses):
+    for _ in range(num_courses):
+        course_data = generate_random_course()
+        print("Inserting course",course_data )
+        db.course.insert(**course_data)
 
 

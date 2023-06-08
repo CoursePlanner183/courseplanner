@@ -1,31 +1,152 @@
-[[extend "layout.html"]]
+[[extend 'layout.html']]
 
-<div class="section is-half"" id="vue-target" v-cloak>
+<section class="section" id="vue-target" v-cloak>
+  <div class="container">
 
-<table id="table" class="table is-striped is-fullwidth">
-    <thead>
-        <th><abbr title="Abbrevation">Abbr</abbr></th>
-        <th>Number</th>
-        <th>Description</th>
-        <th>Credit</th>
-        <th>Offering</th>
-        <th class="clickable has-text-link" style="text-decoration:underline;">Year offered</th>
-    </thead>
-    <tbody>
-        [[for row in rows:]]
-        <tr>
-            <td>[[=row.abbrevation]]</td>
-            <td>[[=row.number]]</td>
-            <td>[[=row.description]]</td>
-            <td>[[=row.credits]]</td>
-            <td>[[=row.offering]]</td>
-            <td>[[=row.year]]</td>
+    <!--Start of search form -->
+    <div class="columns is-centered" v-if="ShowSearch">
+      <div class="column is-half ">
+        <div class="box" style="max-width: none;">
+          <h1 class="title">Course Search</h1>
+          <div id="app">
+            [[=searchForm]]
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--[[pass]]-->
+    <!--end of search form -->
 
-        </tr>
+    <!--Start of search results -->
+    <div class="content is-centered">
+      <h2 class="title is-4 edit-results">[[=len(results)
+        pass]] Result(s):</h2>
+      <ul>
+        [[for row in results:]]
+        <li class="result-card" ref="[[=row.id]]-card">
+          <div class="result-header">
+            <strong>[[=row.abbreviation]] [[=row.number]] - [[=row.name]]</strong>
+            <span class="result-icons">
+              [[if row.is_not_enrolled:]]
+              <a class="button" @click="addCourse([[=row.id]])" ref="[[=row.id]]-add">
+                <span class="icon"><i class="fa fa-fw fa-plus has-text-success"
+                    title="Add course to planner"></i></span>
+              </a>
+              [[pass]]
+              [[if row.is_owner:]]
+              <a class="button" href="[[=URL('course/edit', row.id)]]">
+                <span class="icon"><i class="fa fa-fw fa-pencil has-text-info" title="Edit course"></i></span>
+              </a>
+              [[pass]]
+              [[if row.is_not_enrolled:]]
+              <a class="button" @click="deleteCourse([[=row.id]])" ref="[[=row.id]]-delete">
+                <span class="icon"><i class="fa fa-fw fa-trash has-text-danger" title="Delete course"></i></span>
+              </a>
+              [[pass]]
+            </span>
+          </div>
+          <div class="result-details">
+            <p><strong>Name:</strong> [[=row.name]]</p>
+            <p><strong>Description:</strong> [[=row.description]]</p>
+            <p><strong>Credits:</strong> [[=row.credits]]</p>
+            <p>
+              <strong>Instructor:</strong>
+              <span class="icon-text">
+                <span class="icon"><i class="fa fa-fw fa-user"></i></span>
+                <span>[[=row.instructor]]</span>
+              </span>
+            </p>
+            <p><strong>Offering(s):</strong> [[=', '.join(row.offering)]]</p>
+            <p><strong>Year:</strong> [[=row.year]]</p>
+          </div>
+
+        </li>
         [[pass]]
+      </ul>
+    </div>
+  </div>
+  <!--end of search results -->
 
-    </tbody>
-</table>
 
-    
-</div>
+</section>
+
+[[block page_styles]]
+<style>
+  .greyed-out {
+    color: grey;
+    pointer-events: none;
+   cursor: default;
+  }
+
+  .section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .edit-results {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .edit-results-text {
+    font-size: smaller;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .box {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .select {
+    vertical-align: inherit;
+  }
+
+  .clickable {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .result-card {
+    margin-bottom: 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    padding: 10px;
+    border-color: #ddd;
+    list-style-type: none;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #d9edf7;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    color: #fff;
+  }
+
+  .result-icons {
+    display: flex;
+    align-items: center;
+  }
+
+  .result-icons .button {
+    margin-left: 5px;
+  }
+
+  .result-details {
+    margin-top: 10px;
+  }
+</style>
+[[end]]
+
+[[block page_scripts]]
+<script src="js/course_search.js"></script>
+[[end]]
