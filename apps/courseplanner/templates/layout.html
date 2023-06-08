@@ -35,16 +35,8 @@
 
       <div id="the-navbar-menu" class="navbar-menu">
         <div class="navbar-start">
-          [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link is-primary is-vcentered">
-              Planner
-            </a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item" href="[[=URL('planner/add')]]">My Planner</a>
-              <a class="navbar-item" href="[[=URL('planner/add')]]">Add planner</a>
-              <a class="navbar-item" href="[[=URL('share')]]">Share Planner</a>
-            </div>
+          <div class="navbar-brand">
+            <a class="navbar-item is-primary is-vcentered" href="[[=URL('share')]]">Share Planner</a>
           </div>
           <div class="navbar-brand">
             <a class="navbar-item is-primary is-vcentered" href="[[=URL('grades/calculator')]]">Grade Calculator</a>
@@ -61,7 +53,6 @@
                   </a>
                   <div class="navbar-dropdown is-right">
                     <a class="navbar-item" href="[[=URL('user/profile')]]">Profile</a>
-                    <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile 2</a>
                     <a class="navbar-item " href="[[=URL('auth/change_password')]]">Change Password</a></li>
                     <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
                   </div>
