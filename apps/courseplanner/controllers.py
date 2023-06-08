@@ -33,7 +33,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from py4web.utils.form import Form, FormStyleDefault,FormStyleBulma,SelectWidget
-from .models import get_username, get_user_email
+from .models import get_username
 from pydal.validators import *
 
 url_signer = URLSigner(session)
@@ -42,12 +42,7 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
-    user_email = get_user_email()  # Assuming get_user_email() returns the user's email as a string
-    user = db(db.auth_user.email == user_email).select().first()
-    if user:
-        courses = db(db.course_taken.user_id == user.id).select().as_list()
-    else:
-        courses = []
+    courses = db(db.course).select().as_list()
     curr_user = db.auth_user(auth.user_id)
     print(auth.user_id)
     return dict(
@@ -56,10 +51,8 @@ def index():
         add_course_url=URL('add_courses', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('edit_course', signer=url_signer),
-        share_courses_url=URL('share_courses', signer=url_signer),
+        share_courses_url= URL('share_courses', signer=url_signer),
     )
-
-
 
 @action('course/create', method=["GET", "POST"])
 @action.uses('course.html', db, auth.user, url_signer)
@@ -83,14 +76,14 @@ def get_courses():
 @action('get_planners', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_planners():
-    user_email = get_user_email()
+    user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
-    courses_taken = db(db.course_taken.user_id == user_email).select(orderby=db.course_taken.year).as_list()
+    courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
+    print(db.student)
     return dict(
         courses=courses,
-        courses_taken=courses_taken,
+        courses_taken=courses_taken
     )
-
 
 @action('share')
 @action.uses('share.html', db, auth.user, url_signer)
