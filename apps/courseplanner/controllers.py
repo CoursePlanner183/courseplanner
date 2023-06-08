@@ -43,9 +43,11 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
+    curr_user = db.auth_user(auth.user_id)
     print(auth.user_id)
     return dict(
         courses=courses,
+        curr_user=curr_user,
         add_course_url=URL('add_courses', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('edit_course', signer=url_signer),

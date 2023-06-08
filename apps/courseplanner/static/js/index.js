@@ -11,6 +11,7 @@ let init = (app) => {
         selectedCourses: [],
         deleteMode: false,
         selectedDelete: [],
+        curr_user: {},
     };
 
     app.enumerate = (a) => {
@@ -120,6 +121,8 @@ let init = (app) => {
     // This initializes it.
     app.init = () => {
         // Put here any initialization code.
+        app.vue.curr_user = {}; // Initialize curr_user object
+
         axios.get("../get_courses").then(function(response) {
             app.vue.courses = app.enumerate(response.data.courses);
             console.log("courses", app.enumerate(response.data.courses));
@@ -129,7 +132,14 @@ let init = (app) => {
             // Updates Planner
             app.vue.updatePlanner();
         });
+        axios.get("../get_user").then(function(response) {
+            app.vue.curr_user.first_name = response.data.first_name;
+            app.vue.curr_user.last_name = response.data.last_name;
+
+            // ...
+        });
     };
+
 
     // Call the initializer.
     app.init();
