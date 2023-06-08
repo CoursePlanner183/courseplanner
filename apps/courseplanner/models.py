@@ -27,61 +27,6 @@ def get_time():
 ## always commit your models to avoid problems later
 
 
-db.define_table(
-    "school",
-    Field("name", type='string'),
-    Field("abbr", type="string"),
-    Field("state", type="string"),
-    Field("state_abbr", type="string"),
-)
-
-db.define_table(
-    "course",
-    Field("name", type='string'),
-    Field("number", type="integer"),
-    Field("credits", type="integer"),
-    Field("offering",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
-    Field("year","integer"),
-)
-
-db.define_table(
-    "student",
-    Field("user_id", 'reference auth_user',writable=False,readable=True),
-    Field("school_id", "reference school"),
-    Field("grad_start_date", type="date"),
-    Field("grad_end_date", type="date"),
-    Field("major", type="string"),
-)
-
-db.define_table(
-    "course_taken",
-    Field("user_id", 'reference auth_user',writable=False,readable=True),
-    Field("course_id", "reference course",writable=False,readable=True),
-    Field("is_enrolled", type="boolean"),
-    Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-    Field("year", type="integer"),
-    Field("final_grade", type="string"),
-)
-
-db.define_table(
-    "course_grade_categories",
-    Field("user_id", 'reference auth_user'),
-    Field("course_taken_id", "reference course_taken", writable=False, readable=True),
-    Field("category_name", type="string"),
-    Field("grade", type="float"),
-    Field("weight", type="float"),
-)
-
-# temp table, can be added to student once forced profiles can be worked out.
-db.define_table(
-    "shared_planner",
-    Field("user_id", 'reference auth_user'),
-    Field("name", type="string")
-)
-
-db.student.id.writable = False
-db.course.id.writable = False
-
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
     ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
@@ -156,11 +101,14 @@ db.define_table(
 
 db.course.created_by.readable = db.course.created_by.writable = False
 db.course.id.readable = db.course.id.writable = False
+
 db.define_table(
     "student",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
-    Field("school_id","integer", "reference school"),
-    Field("grad_date", type="date"),
+    Field("school_id", "reference school"),
+    Field("grad_start_date", type="date"),
+    Field("grad_end_date", type="date"),
+    Field("major", type="string"),
 )
 
 db.define_table(
@@ -175,6 +123,7 @@ db.define_table(
     Field("is_shared", type="boolean", default=False),
 )
 
+
 db.define_table(
     "course_grade_categories",
     Field("user_id", 'reference auth_user', default=lambda: auth.user_id),
@@ -182,6 +131,13 @@ db.define_table(
     Field("category_name", type="string"),
     Field("grade", type="float"),
     Field("weight", type="float"),
+)
+
+# temp table, can be added to student once forced profiles can be worked out.
+db.define_table(
+    "shared_planner",
+    Field("user_id", 'reference auth_user'),
+    Field("name", type="string")
 )
 
 db.student.id.writable = False

@@ -33,7 +33,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from py4web.utils.form import Form, FormStyleDefault,FormStyleBulma,SelectWidget
-from .models import insert_random_courses, get_username
+from .models import insert_random_courses, get_username,csu_schools,uc_schools
 from pydal.validators import *
 
 url_signer = URLSigner(session)
