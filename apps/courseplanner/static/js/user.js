@@ -5,9 +5,19 @@ let app = {};
 let init = (app) => {
     // This is the Vue data.
     app.data = {
-        options: ['list', 'of', 'options'],
-        value: null,
+        schools: [],
+        student: {},
     };
+
+    app.getSchools = async () => {
+        const response = await axios.get('/courseplanner/universities');
+        app.data.schools = response.data.schools;
+    }
+
+    app.getMe = async () => {
+        const response = await axios.get('/courseplanner/me');
+        app.data.student = response.data;
+    }
 
     // This contains all the methods.
     app.methods = {
@@ -21,9 +31,10 @@ let init = (app) => {
         methods: app.methods,
     });
 
-
     // This initializes it.
     app.init = () => {
+        app.getMe();
+        app.getSchools();
     };
 
     // Call the initializer.

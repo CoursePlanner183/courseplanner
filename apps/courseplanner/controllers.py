@@ -32,8 +32,8 @@ from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from py4web.utils.form import Form, FormStyleDefault, FormStyleBulma, SelectWidget,CheckboxWidget,RadioWidget
-from .models import insert_random_courses, get_username, csu_schools, uc_schools
+from py4web.utils.form import Form, FormStyleDefault,FormStyleBulma,SelectWidget
+from .models import insert_random_courses, get_username
 from pydal.validators import *
 
 url_signer = URLSigner(session)
@@ -43,12 +43,14 @@ url_signer = URLSigner(session)
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
     courses = db(db.course).select().as_list()
+    curr_user = db.auth_user(auth.user_id)
     #db(db.course).delete()
     #db(db.course_taken).delete()
     #insert_random_courses(20)
     print(auth.user_id)
     return dict(
         courses=courses,
+        curr_user=curr_user,
         add_course_url=URL('course/add', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('course/edit', signer=url_signer),
@@ -86,13 +88,12 @@ def edit_course(courseId=None):
 @action.uses(db, auth.user, url_signer)
 def get_courses():
     courses = db(db.course).select().as_list()
-    courses_taken = db(db.course_taken.user_id ==
-                       auth.user_id).select().as_list()
+    courses_taken = db(db.course_taken.user_id == auth.user_id).select().as_list()
     return dict(
         id=auth.user_id,
         courses=courses,
         courses_taken=courses_taken,
-    )
+        )
 
 @action('course/all', method=["GET"])
 @action.uses('courses_list.html', db, auth.user, url_signer)
@@ -109,6 +110,7 @@ def get_planners():
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
+    print(db.student)
     return dict(
         courses=courses,
         courses_taken=courses_taken
@@ -119,6 +121,7 @@ def get_planners():
 def share():
     return dict(
         get_planners_url= URL('get_planners', signer=url_signer),
+        get_shared_users_url= URL('get_shared_users', signer=url_signer),
     )
 
 @action('course/history', method=["GET", "POST"])
@@ -135,55 +138,25 @@ def course_history():
 @action('user/profile',method=["GET", "POST"])
 @action.uses('user.html', db, auth.user, url_signer, session)
 def profile():
-
-    Fields = []
-    for field in db.auth_user:
-        if(field.name == 'username'):
-            print("name is ", field.name)
-            print("writable is ", field.writable)
-            print("readable is ", field.readable)
-            field.writable = False
-            field.readable = True
-            print("requires is ", field.requires)
-        Fields.append(field)
-    Fields.append(Field('grad_date', type='date'))
-    all_schools = [school[0] for school in csu_schools] + [school[0] for school in uc_schools]
-    Fields.append(Field('School', type='string',
-                  requires=IS_IN_SET(all_schools)))
-    form = Form(Fields, deletable=False, formstyle=FormStyleBulma, csrf_session=session)
-
-    print("FORM IS GAME", form.accepted)
-    if form.accepted:
-        print('GAMEEEEEE')
-        db.auth_user.update((db.auth_user.id == auth_user["id"]),
-                            username=form.vars['username'],
-                            email=form.vars['email'],
-                            first_name=form.vars['first_name'],
-                            last_name=form.vars['last_name'])
-        picked_school_id = db(db.school.name == form.vars['School']).select().first()["id"]
-        db.student.update((db.student.user_id == auth_user["id"]),
-                          grad_date=form.vars['grad_date'],
-                          school_id=picked_school_id)
-        redirect(URL('index'))
-    # Adds user profile info if it exists
-    auth_user = auth.get_user()
-
-    if(auth_user is not None):
-        form.vars['username'] = auth_user["username"]
-        form.vars['email'] = auth_user["email"]
-        form.vars['first_name'] = auth_user["first_name"]
-        form.vars['last_name'] = auth_user["last_name"]
-        user = db(db.student.user_id == auth_user["id"]).select().first()
-        print(user)
-        if user is not None:
-            form.vars["grad_date"] = user["grad_date"]
-            form.vars["school"] = db(
-                db.school.id == user["school_id"]).select().first()["name"]
-
-    return dict(form=form)
+    if request.method == "POST":
+        student = { k: v for k, v in request.forms.items() if k in ['id', 'user_id', 'school_id', 'major', 'grad_start_date', 'grad_end_date']}
+        db.student(student["id"]).update_record(
+            school_id=student["school_id"],
+            major=student["major"],
+            grad_start_date=student["grad_start_date"],
+            grad_end_date=student["grad_end_date"]
+        )
+        user = { k: v for k, v in request.forms.items() if k in ["email", "first_name", "last_name"]}
+        db.auth_user(auth.user_id).update_record(
+            email=user["email"],
+            first_name=user["first_name"],
+            last_name=user["last_name"],
+        )
+        redirect(URL('user/profile'))
+    return dict()
 
 
-@action('course/edit', method=["GET", "POST"])
+@action('edit_course', method=["GET", "POST"])
 @action.uses('edit_course.html', db, session, auth.user, url_signer)
 def edit_course():
     if request.method == 'GET':
@@ -400,10 +373,26 @@ def submit_grade():
     return dict(course_id=course_id, grade=grade)
 
 
+@action('universities')
+@action.uses(db, auth.user, url_signer)
+def universities():
+    schools = db(db.school).select().as_list()
+    return dict(schools=schools)
+
+@action('me')
+@action.uses(db, auth.user, url_signer)
+def me():
+    query = (db.auth_user.id == auth.user_id) & (db.auth_user.id == db.student.user_id)
+    x = db(query).select().as_list()[0]
+    return { **x["auth_user"], **x["student"] }
+
+
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    db(db.course_taken.user_id == auth.user_id).update(is_shared=True)
+    curr_user = db(db.auth_user.id == auth.user_id).select().as_list()
+    username = curr_user[0]['username']
+    db.shared_planner.update_or_insert(user_id=auth.user_id, name=username)
     return "ok"
 
 def add_california_schools():
@@ -415,10 +404,8 @@ def add_california_schools():
             db.school.insert(name=school_name, abbr=abbr,
                              state=state, state_abbr=state_abbr)
 
-    for school_name, abbr, state, state_abbr in uc_schools:
-        school = db.school(name=school_name)
-        if school:
-            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
-        else:
-            db.school.insert(name=school_name, abbr=abbr,
-                             state=state, state_abbr=state_abbr)
+@action('get_shared_users', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_shared_users():
+    users = db(db.shared_planner.user_id != auth.user_id).select().as_list()
+    return dict(users=users)

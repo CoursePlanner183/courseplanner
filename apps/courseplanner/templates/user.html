@@ -1,22 +1,80 @@
-[[extend "layout.html"]]
+[[extend 'layout.html']]
 
-<style>
-  .auth-container {
-    max-width: 80%;
-    min-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #e1e1e1;
-    border-radius: 10px;
-    padding: 20px;
-  }
 
-  a.button {
-    margin-left: 10px;
-  }
-</style>
+<div id="vue-target">
+  <section class="section">
+    <form accept-charset="utf8" action="//127.0.0.1:8000/courseplanner/user/profile" enctype="multipart/form-data" method="POST">
+      <input hidden type="hidden" name="id" v-model="student.id">
+      <div class="field">
+        <label class="label">Username</label>
+        <div class="control">
+          <div class="">{{ student.username }}</div>
+        </div>
+        <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+              <input class="input" id="auth_user_email" name="email" type="text" v-model="student.email">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">First Name</label>
+          <div class="control">
+              <input class="input" id="auth_user_first_name" name="first_name" type="text" v-model="student.first_name">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">Last Name</label>
+          <div class="control">
+              <input class="input" id="auth_user_last_name" name="last_name" type="text" v-model="student.last_name">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">Major</label>
+          <div class="control">
+              <input class="input" name="major" type="text" v-model="student.major">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">Grad Start Date</label>
+          <div class="control">
+              <input class="input" name="grad_start_date" type="date" v-model="student.grad_start_date">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">Grad End Date</label>
+          <div class="control">
+              <input class="input" name="grad_end_date" type="date" v-model="student.grad_end_date">
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <label class="label">University</label>
+          <div class="select">
+            <select class="control select" name="school_id">
+              <option v-for="school in schools" :selected="school.id === student.school_id" :value="school.id">{{ school.name }}</option>
+            </select>
+          </div>
+          <p class="help"></p>
+      </div>
+      <div class="field">
+          <div class="control">
+              <input class="button is-primary" type="submit" value="Submit">
+          </div>
+      </div>
+    </form>
 
-<section class="section">
-  [[=form]]
+  </section>
+</div>
 
-</section>
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script src="js/user.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>
+[[end]]

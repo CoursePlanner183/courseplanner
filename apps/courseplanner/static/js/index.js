@@ -11,11 +11,8 @@ let init = (app) => {
         selectedCourses: [],
         deleteMode: false,
         selectedDelete: [],
-        planners: [],
-        currentPlanner: {},
+        curr_user: {},
     };
-
-    
 
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
@@ -40,8 +37,6 @@ let init = (app) => {
             app.init(); // Reload the data after deleting courses
         });
     };
-
-    
 
     // Checks if there are courses to add to planner. If there are, then adds courses and years.
     app.updatePlanner = function() {
@@ -109,11 +104,17 @@ let init = (app) => {
         }
     };
 
+    // Set is_shared to true for all courses in course_taken from user
+    app.share_courses = async function() {
+        axios.post(share_courses_url);
+    };
+
     // This contains all the methods.
     app.methods = {
         addcourses: app.addcourses,
         updatePlanner: app.updatePlanner,
         deleteCourses: app.deleteCourses,
+        share_courses: app.share_courses,
     };
 
     // This creates the Vue instance.
@@ -126,6 +127,8 @@ let init = (app) => {
     // This initializes it.
     app.init = () => {
         // Put here any initialization code.
+        app.vue.curr_user = {}; // Initialize curr_user object
+
         axios.get("../get_courses").then(function(response) {
             app.vue.courses = app.enumerate(response.data.courses);
             console.log("courses", app.enumerate(response.data.courses));
@@ -135,7 +138,14 @@ let init = (app) => {
             // Updates Planner
             app.vue.updatePlanner();
         });
+        axios.get("../get_user").then(function(response) {
+            app.vue.curr_user.first_name = response.data.first_name;
+            app.vue.curr_user.last_name = response.data.last_name;
+
+            // ...
+        });
     };
+
 
     // Call the initializer.
     app.init();

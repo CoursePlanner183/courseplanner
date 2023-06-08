@@ -20,8 +20,68 @@ def get_time():
     return datetime.datetime.utcnow()
 
 
-#Adding in some CSU and UC schools mostly for testing.
-#TODO: Add more schools as needed and possible option for creating own schools
+### Define your table below
+#
+# db.define_table('thing', Field('name'))
+#
+## always commit your models to avoid problems later
+
+
+db.define_table(
+    "school",
+    Field("name", type='string'),
+    Field("abbr", type="string"),
+    Field("state", type="string"),
+    Field("state_abbr", type="string"),
+)
+
+db.define_table(
+    "course",
+    Field("name", type='string'),
+    Field("number", type="integer"),
+    Field("credits", type="integer"),
+    Field("offering",type='string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'])),
+    Field("year","integer"),
+)
+
+db.define_table(
+    "student",
+    Field("user_id", 'reference auth_user',writable=False,readable=True),
+    Field("school_id", "reference school"),
+    Field("grad_start_date", type="date"),
+    Field("grad_end_date", type="date"),
+    Field("major", type="string"),
+)
+
+db.define_table(
+    "course_taken",
+    Field("user_id", 'reference auth_user',writable=False,readable=True),
+    Field("course_id", "reference course",writable=False,readable=True),
+    Field("is_enrolled", type="boolean"),
+    Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
+    Field("year", type="integer"),
+    Field("final_grade", type="string"),
+)
+
+db.define_table(
+    "course_grade_categories",
+    Field("user_id", 'reference auth_user'),
+    Field("course_taken_id", "reference course_taken", writable=False, readable=True),
+    Field("category_name", type="string"),
+    Field("grade", type="float"),
+    Field("weight", type="float"),
+)
+
+# temp table, can be added to student once forced profiles can be worked out.
+db.define_table(
+    "shared_planner",
+    Field("user_id", 'reference auth_user'),
+    Field("name", type="string")
+)
+
+db.student.id.writable = False
+db.course.id.writable = False
+
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
     ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
@@ -42,26 +102,36 @@ csu_schools = [
     # Add more CSU schools as needed
 ]
 uc_schools = [
-        ('University of California, Berkeley', 'UCB', 'California', 'CA'),
-        ('University of California, Davis', 'UCD', 'California', 'CA'),
-        ('University of California, Irvine', 'UCI', 'California', 'CA'),
-        ('University of California, Los Angeles', 'UCLA', 'California', 'CA'),
-        ('University of California, Merced', 'UCM', 'California', 'CA'),
-        ('University of California, Riverside', 'UCR', 'California', 'CA'),
-        ('University of California, San Diego', 'UCSD', 'California', 'CA'),
-        ('University of California, San Francisco', 'UCSF', 'California', 'CA'),
-        ('University of California, Santa Barbara', 'UCSB', 'California', 'CA'),
-        ('University of California, Santa Cruz', 'UCSC', 'California', 'CA'),
-        # Add more UC schools as needed
+    ('University of California, Berkeley', 'UCB', 'California', 'CA'),
+    ('University of California, Davis', 'UCD', 'California', 'CA'),
+    ('University of California, Irvine', 'UCI', 'California', 'CA'),
+    ('University of California, Los Angeles', 'UCLA', 'California', 'CA'),
+    ('University of California, Merced', 'UCM', 'California', 'CA'),
+    ('University of California, Riverside', 'UCR', 'California', 'CA'),
+    ('University of California, San Diego', 'UCSD', 'California', 'CA'),
+    ('University of California, San Francisco', 'UCSF', 'California', 'CA'),
+    ('University of California, Santa Barbara', 'UCSB', 'California', 'CA'),
+    ('University of California, Santa Cruz', 'UCSC', 'California', 'CA'),
+    # Add more UC schools as needed
 ]
 
 
-### Define your table below
-#
-# db.define_table('thing', Field('name'))
-#
-## always commit your models to avoid problems later
+def add_california_schools():
+    for school_name, abbr, state, state_abbr in csu_schools:
+        school = db.school(name=school_name)
+        if school:
+            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
+        else:
+            db.school.insert(name=school_name, abbr=abbr,
+                             state=state, state_abbr=state_abbr)
 
+    for school_name, abbr, state, state_abbr in uc_schools:
+        school = db.school(name=school_name)
+        if school:
+            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
+        else:
+            db.school.insert(name=school_name, abbr=abbr,
+                             state=state, state_abbr=state_abbr)
 
 db.define_table(
     "school",

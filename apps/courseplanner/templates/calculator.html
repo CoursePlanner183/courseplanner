@@ -1,23 +1,24 @@
 [[extend 'layout.html']]
 
 <style>
-  .auth-container {
-    max-width: 80%;
-    min-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #e1e1e1;
-    border-radius: 10px;
-    padding: 20px;
-  }
-  a.button {
-      margin-left: 10px;
-  }
+    .auth-container {
+        max-width: 80%;
+        min-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid #e1e1e1;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    
+    a.button {
+        margin-left: 10px;
+    }
 </style>
 
 <div id="vue-target">
 
-    <div class="columns">
+    <div class="columns mx-2">
         <div class="column mt-6 is-half">
             <h1 class="title">Grade Calculator</h1>
             <div class="select mb-4">
@@ -57,15 +58,15 @@
 
             <div class="field">
                 <div class="buttons">
-                    <button type="button"  title="Calculate" class="button is-success" @click="saveGradeCategories" >Save</button>
+                    <button type="button" title="Calculate" class="button is-success" @click="saveGradeCategories">Save</button>
                 </div>
             </div>
 
             <div class="field">
-                <label  class="label">Average grade</label>
+                <label class="label">Average Grade</label>
                 <div class="field has-addons">
                     <div class="control">
-                        <input type="text" placeholder="Percentage" min="0" step="any"  class="input" v-model="average_grade" readonly>
+                        <input type="text" placeholder="Percentage" min="0" step="any" class="input" v-model="average_grade" readonly>
                     </div>
                     <div class="control">
                         <span class="button is-static">%</span>
@@ -94,7 +95,7 @@
 
             <div class="field">
                 <div class="buttons">
-                    <button type="button"  title="Calculate" class="button is-info" @click="submitGrade">Submit Grade</button>
+                    <button type="button" title="Calculate" class="button is-info" @click="submitGrade">Submit Grade</button>
                 </div>
             </div>
         </div>
@@ -102,9 +103,9 @@
 
         <div class="column is-right">
             <h1 class="title mt-6">GPA Calculator</h1>
-            <p>GPA calculator - calculates GPA from letter grades and credit points:</p>
-            <form  class="calc" autocomplete="off">
-                <table  class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            <p>GPA Calculator: Calculates GPA from letter grades and credit points</p>
+            <form class="calc" autocomplete="off">
+                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                     <tbody>
                         <tr>
                             <th class="has-text-centered">Course</th>
@@ -123,16 +124,16 @@
 
                 <div class="field">
                     <label class="label">GPA</label>
-                    <input type="text"  readonly class="input is-large" v-model="gpa">
+                    <input type="text" readonly class="input is-large" v-model="gpa">
                 </div>
 
                 <div class="field">
-                    <div  class="red small mb-3"></div>
+                    <div class="red small mb-3"></div>
                 </div>
 
                 <div class="field">
-                    <label class="label">Total credits/hours</label>
-                    <input type="text"  class="input" readonly v-model="total_credits">
+                    <label class="label">Total Credits/Hours</label>
+                    <input type="text" class="input" readonly v-model="total_credits">
                 </div>
             </form>
 
