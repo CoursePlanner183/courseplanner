@@ -40,16 +40,18 @@ let init = (app) => {
 
     const calculateGpa = courses => {
         const out = courses.reduce((acc, c) => {
-            acc.credits += c.credits;
-            acc.weightGpa += (c.credits * gradePoints[c.final_grade])
+            if (gradePoints[c.final_grade]){
+                acc.credits += c.credits;
+                acc.weightGpa += (c.credits * gradePoints[c.final_grade])
+            }
             return acc;
         }, { weightGpa: 0, credits: 0 });
-        return out.weightGpa / out.credits;
+        return out.credits && (out.weightGpa / out.credits).toFixed(2);
     }
     
     const totalCredits = courses => {
         return courses.reduce((acc, c) => {
-            return acc + c.credits;
+            return c.final_grade ? acc + c.credits : acc;
         }, 0);
     }
 

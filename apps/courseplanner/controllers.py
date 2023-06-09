@@ -162,7 +162,7 @@ def profile():
     if request.method == "POST":
         student = { k: v for k, v in request.forms.items() if k in ['id', 'user_id', 'school_id', 'major', 'grad_start_date', 'grad_end_date']}
         db.student(student["id"]).update_record(
-            #school_id=student["school_id"],
+            school_id=student["school_id"],
             major=student["major"],
             grad_start_date=student["grad_start_date"],
             grad_end_date=student["grad_end_date"]
@@ -399,7 +399,8 @@ def calc():
 @action('get_my_courses')
 @action.uses(db, auth.user, url_signer)
 def get_my_courses():
-    query = (db.course_taken.user_id == auth.user_id) & (db.course_taken.course_id == db.course.id)
+    query = (db.course_taken.user_id == auth.user_id) & (db.course_taken.status.belongs(['Enrolled', 'Taken'])) & (
+        db.course_taken.course_id == db.course.id)
     courses_taken = db(query).select().as_list()
     courses_taken = [{**c["course"], **c["course_taken"]} for c in courses_taken]
     return dict(courses_taken=courses_taken)
