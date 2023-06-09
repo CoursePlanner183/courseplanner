@@ -30,9 +30,9 @@
         <div class="column" hidden>
             <section class="section">
                 <div class="container">
-                    <h2 id="planner_name" class="subtitle">
+                    <h2 id="planner_name" class="title">
                         [[=curr_user.first_name]] [[=curr_user.last_name]]'s Planner
-                        <a class="button is-primary" @click="share_courses()">
+                        <a class="button is-primary ml-4" @click="share_courses()">
                             <span>Share</span>
                         </a>
                     </h2>
@@ -53,7 +53,7 @@
                             </tbody>
                         </table>
                         <a id="add_year_btn" class="button is-primary" @click="add_year()">
-                            <span>Add year</span>
+                            <span>Add Year</span>
                         </a>
                         <a id="delete_year_btn" class="button is-primary" @click="delete_year()">
                             <span>Delete Year</span>
