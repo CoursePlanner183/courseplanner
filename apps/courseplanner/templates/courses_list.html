@@ -1,39 +1,39 @@
 [[extend "layout.html"]]
 
 
+<title>All Courses</title>
+
+<div class="section is-half" id="vue-target" v-cloak>
+    <article class="message is-info">
+        <div class="message-body">
+            Only public courses and courses you create will be shown here.
+        </div>
+    </article>
+
+    <table id="table" class="table is-striped is-fullwidth">
+        <thead>
+            <th><abbr title="Abbreviation">Abbr</abbr></th>
+            <th>Number</th>
+            <th>Description</th>
+            <th>Credit</th>
+            <th>Offering</th>
+            <th class="clickable has-text-link" style="text-decoration:underline;">Year offered</th>
+        </thead>
+        <tbody>
+            [[for row in rows:]]
+            <tr>
+                <td>[[=row.abbreviation]]</td>
+                <td>[[=row.number]]</td>
+                <td>[[=row.description]]</td>
+                <td>[[=row.credits]]</td>
+                <td>[[=row.offering]]</td>
+                <td>[[=row.year]]</td>
+
+            </tr>
+            [[pass]]
+
+        </tbody>
+    </table>
 
 
-<div class="section is-half"" id="vue-target" v-cloak>
-<article class="message is-info">
-    <div class="message-body">
-        Only public courses and courses you create will be shown here. 
-    </div>
-</article>
-
-<table id="table" class="table is-striped is-fullwidth">
-    <thead>
-        <th><abbr title="Abbreviation">Abbr</abbr></th>
-        <th>Number</th>
-        <th>Description</th>
-        <th>Credit</th>
-        <th>Offering</th>
-        <th class="clickable has-text-link" style="text-decoration:underline;">Year offered</th>
-    </thead>
-    <tbody>
-        [[for row in rows:]]
-        <tr>
-            <td>[[=row.abbreviation]]</td>
-            <td>[[=row.number]]</td>
-            <td>[[=row.description]]</td>
-            <td>[[=row.credits]]</td>
-            <td>[[=row.offering]]</td>
-            <td>[[=row.year]]</td>
-
-        </tr>
-        [[pass]]
-
-    </tbody>
-</table>
-
-    
 </div>
