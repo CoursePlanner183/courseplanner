@@ -109,6 +109,7 @@ db.define_table(
     Field("grad_start_date", type="date"),
     Field("grad_end_date", type="date"),
     Field("major", type="string"),
+    Field("shared_planner", type="boolean", default=False)
 )
 
 db.define_table(

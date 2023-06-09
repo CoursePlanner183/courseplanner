@@ -12,6 +12,10 @@ let init = (app) => {
         year3: [],
         year4: [],
         users: [],
+        searched_users: [],
+        selected_id: -1,
+        selected_mode: 0,
+        query: "",
     };    
     
     app.enumerate = (a) => {
@@ -124,13 +128,27 @@ let init = (app) => {
             console.log(app.vue.year2)
             console.log(app.vue.year3)
             console.log(app.vue.year4)
+            console.log(app.vue.searched_users)
             //Todo add functionality
         });
+    }
+
+    app.search = function() {
+        let toSearch = app.vue.query.toLowerCase()
+        let lowerUser = "";
+        app.vue.searched_users = []
+        for (let i = 0; i < app.vue.users.length; i++) {
+            lowerUser = app.vue.users[i].name.toLowerCase();
+            if (lowerUser.startsWith(toSearch)) {
+                app.vue.searched_users.push(app.vue.users[i]);
+            }
+        }
     }
 
     // This contains all the methods.
     app.methods = {
         getPlanners: app.getPlanners,
+        search: app.search,
     };
 
     // This creates the Vue instance.
