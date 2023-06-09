@@ -90,6 +90,20 @@ def edit_course(courseId=None):
         redirect(URL("index"))
     return (dict(form=form))
 
+@action('course/taken/edit/<course_takenId:int>', method=["GET", "POST"])
+@action.uses('course.html', db, session, auth.user, url_signer)
+def edit_course_taken(course_takenId=None):
+    assert course_takenId is not None
+    course_taken = db.course_taken[course_takenId]
+    if(course_taken.user_id != auth.user_id):
+        redirect(URL('index'))
+    if course_taken is None:
+        redirect(URL('index'))
+    form = Form(db.course_taken,record=course_taken,deletable=False,formstyle=FormStyleBulma,csrf_session=session)
+    if form.accepted:
+        redirect(URL("index"))
+    return (dict(form=form))
+
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():

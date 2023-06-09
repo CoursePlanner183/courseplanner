@@ -4,14 +4,15 @@
     <article class="message is-info">
         <div class="message-body">
             This page shows the courses that you have the status of "enrolled","taken","withdrawn","dropped".
-            <br>Use this page to edit or delete these courses from your account. 
+            <br>Use this page to edit or delete these courses from your account.
         </div>
-      </article>
-      <article class="message is-warning">
+    </article>
+    <article class="message is-warning">
         <div class="message-body">
-            Note that deleting a course on this page will only remove your enrollment. To delete the course itself go to the course search page.
+            Note that deleting a course on this page will only remove your enrollment. To delete the course itself go to
+            the course search page.
         </div>
-      </article>
+    </article>
 
 
     <table id="table" class="table is-striped is-fullwidth">
@@ -32,17 +33,21 @@
                 <td>[[=row.course_taken.final_grade]]</td>
                 <td>[[=row.course_taken.status]]</td>
                 <td>
+                    <a class="button" href="[[=URL('course/taken/edit', row.course_taken.id)]]">
+                        <span class="icon"><i class="fa fa-fw fa-pencil has-text-info" title="Edit course"></i></span>
+                    </a>
                     <a class="button" @click="deleteCourseTaken([[=row.course_taken.id]])">
                         <span class="icon"><i class="fa fa-fw fa-trash has-text-danger" title="Delete"></i></span>
-                      </a>
+                    </a>
+
                 </td>
             </tr>
             [[pass]]
-    
+
         </tbody>
     </table>
 
-    
+
 </section>
 
 [[block page_scripts]]

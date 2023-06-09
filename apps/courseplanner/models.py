@@ -114,15 +114,17 @@ db.define_table(
 
 db.define_table(
     "course_taken",
-    Field("user_id", 'reference auth_user',writable=False,readable=True, default=lambda: auth.user_id),
-    Field("course_id", "reference course",writable=False,readable=True),
-    Field("grade", "integer", "reference course",default=100,writable=False,readable=True),
+    Field("user_id", 'reference auth_user',writable=False,readable=False, default=lambda: auth.user_id),
+    Field("course_id", "reference course",writable=False,readable=False),
     Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
     Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
     Field("year",type='string',requires=IS_IN_SET(['First Year','Second Year','Third Year','Fourth Year', 'Fifth Year', 'Sixth Year'])),
+    Field("grade", "integer",default=100,writable=True,readable=False),
     Field("final_grade", type="string"),
     Field("is_shared", type="boolean", default=False),
 )
+
+db.course_taken.id.readable = db.course_taken.id.writable = False
 
 
 db.define_table(
