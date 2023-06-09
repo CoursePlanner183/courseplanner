@@ -45,6 +45,7 @@ def index():
     student = db(db.student.user_id == auth.user_id).select().as_list()
     if student == []:
         db.student.insert(user_id=auth.user_id)
+    student = db(db.student.user_id == auth.user_id).select().as_list()
     if student[0]['major'] is None:
         redirect(URL('user/profile'))
 
@@ -415,9 +416,7 @@ def me():
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    curr_user = db(db.auth_user.id == auth.user_id).select().as_list()
-    username = curr_user[0]['username']
-    db.shared_planner.update_or_insert(user_id=auth.user_id, name=username)
+    db(db.student.user_id == auth.user_id).update(shared_planner=True)
     return "ok"
 
 def add_california_schools():
@@ -432,5 +431,8 @@ def add_california_schools():
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
-    users = db(db.shared_planner.user_id != auth.user_id).select().as_list()
+    users = db(db.student.user_id != auth.user_id).select().as_list()
+    for u in users:
+        get_name = db(db.auth_user.id == u['user_id']).select().as_list()
+        u['name'] = get_name[0]['username']
     return dict(users=users)
