@@ -1,201 +1,237 @@
-  [[extend 'layout.html']]
+[[extend 'layout.html']]
 
-  <section class="section" id="vue-target" v-cloak>
-    <div class="container">
+<section class="section" id="vue-target" v-cloak>
+  <div class="container">
 
-      <!--Start of search form -->
-      <div class="columns is-centered" v-if="ShowSearch">
-        <div class="column is-half ">
-          <div class="box" style="max-width: none;">
-            <h1 class="title">Course Search</h1>
-            <div id="app">
-              [[=searchForm]]
+    <!--Start of search form -->
+    <div class="columns is-centered" v-if="ShowSearch">
+      <div class="column is-half ">
+        <div class="box" style="max-width: none;">
+          <h1 class="title">Course Search</h1>
+          <div id="app">
+
+            [[=searchForm.custom.begin ]]
+            [[for field in DETAIL_FIELDS: ]]
+            [[ if field == 'course_number': ]]
+            <div class="field">
+              <label class="label">[[=searchForm.custom.labels[field] ]]</label>
+              <div class="control">
+                <div class="select">
+                  [[=searchForm.custom.widgets['number_options'] ]]
+                </div>
+                <div style="display: inline-block; vertical-align: top;">
+                  [[=searchForm.custom.widgets[field] ]]
+                </div>
+              </div>
             </div>
+            [[ elif field == 'offering': ]]
+            <div class="field">
+              <label class="label">[[=searchForm.custom.labels[field] ]]</label>
+              <div class="select is-multiple">
+                [[=searchForm.custom.widgets[field] ]]
+              </div>
+            </div>
+            [[ else: ]]
+            <div class="field">
+              <label class="label">[[=searchForm.custom.labels[field] ]]</label>
+              <div class="control">
+                [[=searchForm.custom.widgets[field] ]]
+              </div>
+            </div>
+            [[pass]]
+            [[pass]]
+            [[=searchForm.custom.submit ]]
+            [[=searchForm.custom.end ]]
+
           </div>
         </div>
       </div>
-      <!--[[pass]]-->
-      <!--end of search form -->
+    </div>
+    <!--[[pass]]-->
+    <!--end of search form -->
 
-      <!--Start of search results -->
-      <div class="content is-centered">
-        <h2 class="title is-4 edit-results">[[=len(results)
-          pass]] Result(s):</h2>
-        <ul>
-          [[for row in results:]]
-          <li class="result-card" ref="[[=row.id]]-card">
-            <div class="result-header">
-              <strong>[[=row.abbreviation]] [[=row.number]] - [[=row.name]]</strong>
-              <span class="result-icons">
-                [[if row.is_not_enrolled:]]
-                <a class="button" @click="openAddCourseBox([[=row.id]],'[[=row.offering[0]]]') " ref="[[=row.id]]-add">
-                  <span class="icon"><i class="fa fa-fw fa-plus has-text-success" title="Add course to planner"></i></span>
-                </a>
-                [[pass]]
-                [[if row.is_owner:]]
-                <a class="button" href="[[=URL('course/edit', row.id)]]">
-                  <span class="icon"><i class="fa fa-fw fa-pencil has-text-info" title="Edit course"></i></span>
-                </a>
-                [[pass]]
-                [[if row.is_not_enrolled:]]
-                <a class="button" @click="deleteCourse([[=row.id]])" ref="[[=row.id]]-delete">
-                  <span class="icon"><i class="fa fa-fw fa-trash has-text-danger" title="Delete course"></i></span>
-                </a>
-                [[pass]]
+    <!--Start of search results -->
+    <div class="content is-centered">
+      <h2 class="title is-4 edit-results">[[=len(results)
+        pass]] Result(s):</h2>
+      <ul>
+        [[for row in results:]]
+        <li class="result-card" ref="[[=row.id]]-card">
+          <div class="result-header">
+            <strong>[[=row.abbreviation]] [[=row.number]] - [[=row.name]]</strong>
+            <span class="result-icons">
+              [[if row.is_not_enrolled and row.offering is not None:]]
+              <a class="button" @click="openAddCourseBox([[=row.id]],[[=row.offering]]) " ref="[[=row.id]]-add">
+                <span class="icon"><i class="fa fa-fw fa-plus has-text-success"
+                    title="Add course to planner"></i></span>
+              </a>
+              [[pass]]
+              [[if row.is_owner:]]
+              <a class="button" href="[[=URL('course/edit', row.id)]]">
+                <span class="icon"><i class="fa fa-fw fa-pencil has-text-info" title="Edit course"></i></span>
+              </a>
+              [[pass]]
+              [[if row.is_not_enrolled:]]
+              <a class="button" @click="deleteCourse([[=row.id]])" ref="[[=row.id]]-delete">
+                <span class="icon"><i class="fa fa-fw fa-trash has-text-danger" title="Delete course"></i></span>
+              </a>
+              [[pass]]
 
+            </span>
+          </div>
+          <div class="result-details" v-cloak>
+            <p><strong>Name:</strong> [[=row.name]]</p>
+            <p><strong>Description:</strong> [[=row.description]]</p>
+            <p><strong>Credits:</strong> [[=row.credits]]</p>
+            <p>
+              <strong>Instructor:</strong>
+              <span class="icon-text">
+                <span class="icon"><i class="fa fa-fw fa-user"></i></span>
+                <span>[[=row.instructor]]</span>
               </span>
-            </div>
-            <div class="result-details" v-cloak>
-              <p><strong>Name:</strong> [[=row.name]]</p>
-              <p><strong>Description:</strong> [[=row.description]]</p>
-              <p><strong>Credits:</strong> [[=row.credits]]</p>
-              <p>
-                <strong>Instructor:</strong>
-                <span class="icon-text">
-                  <span class="icon"><i class="fa fa-fw fa-user"></i></span>
-                  <span>[[=row.instructor]]</span>
-                </span>
-              </p>
-              <p><strong>Offering(s):</strong> [[=', '.join(row.offering)]]</p>
-              <p><strong>Year:</strong> [[=row.year]]</p>
-              <div class="course-box"  v-if="selectedCourseId == [[=row.id]]">
-                <div class="modal">
-                  <div class="modal-content">
-                    <div class="contact-form">
-                      <span class="close has-text-danger" @click="toggleCourseBox( [[=row.id]])">&times;</span>
-                      <h2>Add "[[=row.name]]" to planner</h2>
-                      <!-- Course offering and enrollment status inputs -->
-                      <div class="field">
-                        <label  class="label">Offering taken</label>
-                        <div class="select control">
-                          <select v-model="selectedOffering">
-                            <!-- Options for course offerings -->
-                            [[for offer in row.offering:]]
-                            <option>[[=offer]]</option>
-                            [[pass]]
-                          </select>
-                        </div>
+            </p>
+            <p><strong>Offering(s):</strong> [[=', '.join(row.offering)]]</p>
+            <p><strong>Year:</strong> [[=row.year]]</p>
+            <div class="course-box" v-if="selectedCourseId == [[=row.id]]">
+              <div class="modal">
+                <div class="modal-content">
+                  <div class="contact-form">
+                    <span class="close has-text-danger" @click="toggleCourseBox( [[=row.id]])">&times;</span>
+                    <h2>Add "[[=row.name]]" to planner</h2>
+                    <!-- Course offering and enrollment status inputs -->
+                    <div class="field">
+                      <label class="label">Offering taken</label>
+                      <div class="select control">
+                        <select v-model="selectedOffering">
+                          <!-- Options for course offerings -->
+                          [[for offer in row.offering:]]
+                          <option>[[=offer]]</option>
+                          [[pass]]
+                        </select>
                       </div>
-                      
-                      <div class="field">
-                        <label  class="label">Enrollment Status</label>
-                        <div class="select" >
-                          <select v-model="selectedEnrollmentStatus">
-                            <option>Enrolled</option>
-                            <option>Taken</option>
-                            <option>Withdrawn</option>
-                            <option>Dropped</option>
-                          </select>
-                        </div>
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Enrollment Status</label>
+                      <div class="select">
+                        <select v-model="selectedEnrollmentStatus">
+                          <option>Enrolled</option>
+                          <option>Taken</option>
+                          <option>Withdrawn</option>
+                          <option>Dropped</option>
+                        </select>
                       </div>
-                      
-                      <div class="field">
-                        <label  class="label">Year Taken</label>
-                        <div class="select" >
-                          <select v-model="selectedYearTaken">
-                            <option>First Year</option>
-                            <option>Second Year</option>
-                            <option>Third Year</option>
-                            <option>Fourth Year</option>
-                            <option>Fifth Year</option>
-                            <option>Sixth Year</option>
-                          </select>
-                        </div>
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Year Taken</label>
+                      <div class="select">
+                        <select v-model="selectedYearTaken">
+                          <option>First Year</option>
+                          <option>Second Year</option>
+                          <option>Third Year</option>
+                          <option>Fourth Year</option>
+                          <option>Fifth Year</option>
+                          <option>Sixth Year</option>
+                        </select>
                       </div>
-                      
-                      <div class="control">
-                        <button class="button is-primary" @click="addCourse([[=row.id]])">Add course</button>
-                      </div>
+                    </div>
+
+                    <div class="control">
+                      <button class="button is-primary" @click="addCourse([[=row.id]])">Add course</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            
+          </div>
 
-          </li>
-          [[pass]]
-        </ul>
-      </div>
+
+        </li>
+        [[pass]]
+      </ul>
     </div>
-    <!--end of search results -->
+  </div>
+  <!--end of search results -->
 
 
-  </section>
+</section>
 
-  [[block page_styles]]
-  <style>
-    [v-cloak] {
-            display: none;
-    }
-    .section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  
-    .edit-results {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-  
-    .edit-results-text {
-      font-size: smaller;
-      color: blue;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  
-    .box {
-      max-width: 400px;
-      margin: auto;
-      padding: 20px;
-    }
-  
-    .select {
-      vertical-align: inherit;
-    }
-  
-    .clickable {
-      color: blue;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  
-    .result-card {
-      margin-bottom: 20px;
-      border: 1px solid #e1e1e1;
-      border-radius: 5px;
-      padding: 10px;
-      border-color: #ddd;
-      list-style-type: none;
-    }
-  
-    .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: #d9edf7;
-      padding: 10px;
-      border-radius: 5px 5px 0 0;
-      color: #fff;
-    }
-  
-    .result-icons {
-      display: flex;
-      align-items: center;
-    }
-  
-    .result-icons .button {
-      margin-left: 5px;
-    }
-  
-    .result-details {
-      margin-top: 10px;
-      position: relative;
-    }
-    .course-box {
+[[block page_styles]]
+<style>
+  [v-cloak] {
+    display: none;
+  }
+
+  .section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .edit-results {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .edit-results-text {
+    font-size: smaller;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .box {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .select {
+    vertical-align: inherit;
+  }
+
+  .clickable {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .result-card {
+    margin-bottom: 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    padding: 10px;
+    border-color: #ddd;
+    list-style-type: none;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #d9edf7;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    color: #fff;
+  }
+
+  .result-icons {
+    display: flex;
+    align-items: center;
+  }
+
+  .result-icons .button {
+    margin-left: 5px;
+  }
+
+  .result-details {
+    margin-top: 10px;
+    position: relative;
+  }
+
+  .course-box {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -235,10 +271,9 @@
     color: black;
     text-decoration: none;
   }
+</style>
+[[end]]
 
-  </style>
-  [[end]]
-
-  [[block page_scripts]]
-  <script src="js/course_search.js"></script>
-  [[end]]
+[[block page_scripts]]
+<script src="js/course_search.js"></script>
+[[end]]

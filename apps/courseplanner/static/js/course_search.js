@@ -8,6 +8,7 @@ let init = (app) => {
         ShowSearch: true,
         selectedCourseId: undefined,
         selectedOffering: '',
+        courseNumberOption: 'exact',
         selectedEnrollmentStatus: '',
         selectedYearTaken: '',
     };
@@ -15,6 +16,9 @@ let init = (app) => {
     app.Search = () => {
         // Get the form element
         var form = document.getElementById('searchFormId');
+        console.log(form);
+        form.vars['courseNumberOption'] = this.courseNumberOption;
+        return;
         // Make an AJAX POST request to the form action URL
         form.submit()
     }
@@ -64,7 +68,13 @@ let init = (app) => {
           },
           openAddCourseBox(courseId,offering) {
             this.selectedCourseId = courseId;
-            this.selectedOffering = offering;
+            if(offering != null | offering != undefined){
+                if(offering.length > 0){
+                    this.selectedOffering = offering[0];
+                }else{
+                    this.selectedOffering = '';
+                }
+            }
             this.selectedEnrollmentStatus = "Enrolled";
             this.selectedYearTaken = "First Year";
           }

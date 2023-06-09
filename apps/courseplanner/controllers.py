@@ -107,7 +107,6 @@ def course_list():
     user = auth.get_user()
     rows = db(db.course.created_by == user["id"]).select()
     for row in rows:
-        print("rows is ", row["offering"])
         row["offering"] = ", ".join(row["offering"])
     return dict(rows=rows)
 @action('get_planners', method="GET")
@@ -220,14 +219,22 @@ def edit_course():
 @action.uses('search_course.html',db,session, auth.user)
 def search_course():
     results = []
-    searchForm = Form(
-        [
-            Field("course_name", default=request.forms.get('course_name'), type='string'),
+    
+    #This is so the course option always has a value
+    option = 'Exactly'
+    if(request.forms.get('number_options') != None):
+        option = request.forms.get('number_options')
+    
+    fields =[Field("course_name", default=request.forms.get('course_name'), type='string'),
+            Field("number_options", default=option, type="string",requires=IS_IN_SET(['Exactly', 'Contains', 'Less than or equal to', 'Greater than or equal to'])),
             Field("course_number", default=request.forms.get('course_number'), type="integer"),
             Field("credits", default=request.forms.get('credits'), type="integer"),
             Field("offering",default=request.forms.get('offering'),type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
-            Field("year", default=request.forms.get('year'), type="integer"),
-        ],
+            Field("year", default=request.forms.get('year'), type="integer"),]
+    DETAIL_FIELDS = [field.name for field in fields if field.name != "number_options"]
+    print("DETAIL_FIELDS is", DETAIL_FIELDS)
+    searchForm = Form(
+        fields,
         csrf_session=session,
         formstyle=FormStyleBulma,
     )
@@ -235,41 +242,63 @@ def search_course():
     #Edit form variables
     searchForm.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
     searchForm.structure.find('[name=year]')[0]['_type'] = 'number'
+    searchForm.structure.find('[name=course_number]')[0]['_type'] = 'number'
     searchForm.custom.submit['_@click'] = 'Search()'  # Add custom inline CSS styles to the button
     #print(searchForm.structure)
-   # searchForm.structure.find('form')[0]['_v-on:submit.prevent']= 'search'
     searchForm.structure.find('form')[0]['_id']= 'searchFormId'
-    searchForm.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
-    #print("\n\n", searchForm.structure.find('form')[0], "\n\n")
-    
+    #I am not sure why creating the form adds in a whitespace elemnt but it does ant therefore this must be added to delete it
+    searchForm.custom.widgets['number_options'][0] =''
+    searchForm.custom.widgets['course_number']["_placeholder"] = 'Course #'
     #print("searchForm.custom.submit is", searchForm.custom.submit)
     ShowSearch = True
     if searchForm.accepted:
-        query = None
-        print("vars are", searchForm.vars)
-        if searchForm.vars['course_name'] != None or searchForm.vars["course_name"] != '':
-            query = db.course.name == searchForm.vars['course_name']
+        query = db.course.created_by == auth.user_id
+
+        #Handle the course_name field, look for like or match values in name, abbreviation, and description
+        if searchForm.vars['course_name'] != None and searchForm.vars["course_name"] != '':
+            keyword = searchForm.vars['course_name']
+            query &= (
+                (db.course.name.like(f'%{keyword}%')) |
+                (db.course.abbreviation.like(f'%{keyword}%')) |
+                (db.course.description.like(f'%{keyword}%'))
+            )
+
+        #check for course number
         if searchForm.vars['course_number'] != None and searchForm.vars['course_number'] != '':
-            query = query | (db.course.number == searchForm.vars['course_number'])
+            number_option = searchForm.vars['number_options']
+            number_value = searchForm.vars['course_number']
+            
+            if number_option == 'Exactly':
+                query &= (db.course.number == number_value)
+            elif number_option == 'Contains':
+                query &= (db.course.number.like(f'%{number_value}%'))
+            elif number_option == 'Less than or equal to':
+                query &= (db.course.number > number_value)
+            elif number_option == 'Less than or equal to':
+                query &= (db.course.number < number_value)
+
+        #check for course number
         if searchForm.vars['credits'] != None and searchForm.vars['credits'] != '':
-            query = query | (db.course.credits == searchForm.vars['credits'])
+            query &= db.course.credits == searchForm.vars['credits']
+
+        #check for course offering
         if searchForm.vars['offering'] != None and searchForm.vars['offering'] != '':
-            query = query | (db.course.offering == searchForm.vars['offering'])
+            query &= db.course.offering == searchForm.vars['offering']
+
+        #check for course year
         if searchForm.vars['year'] != None and searchForm.vars['year'] != '':
-            query = query | (db.course.year == searchForm.vars['year'])
-        if(query != None):
-            #query = query | db.course.created_by == auth.user_id
-            results = db(query).select()
+            query &= db.course.year == searchForm.vars['year']
+
+        query &= db.course.created_by == auth.user_id
+        results = db(query).select()
         for result in results:
             #Check to see if user is owner of course, if so allow course editing
             result["is_owner"] = result["created_by"] == auth.user_id
             #Check to see if user is enrolled in course, if so prevent deletion and also prevent adding to planner
             is_not_enrolled = len(db((db.course_taken.course_id == result["id"]) & (db.course_taken.user_id == auth.user_id)).select().as_list()) == 0
             result["is_not_enrolled"] = is_not_enrolled
-        print("query is ",query)
-        print("results are ",results)
         ShowSearch = False
-    return dict(searchForm=searchForm,results=results,ShowSearch=ShowSearch)
+    return dict(searchForm=searchForm,results=results,ShowSearch=ShowSearch,DETAIL_FIELDS=DETAIL_FIELDS)
 
 @action("course/add", method="POST")
 @action.uses(db, auth.user)
