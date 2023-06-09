@@ -498,3 +498,9 @@ def get_shared_users():
         u['name'] = get_name[0]['username']
         u['school'] = get_school[0]['abbr']
     return dict(users=users)
+
+#controller for the help.html page
+@action('help')
+@action.uses('help.html', db, auth.user, url_signer)
+def help():
+    return dict()
