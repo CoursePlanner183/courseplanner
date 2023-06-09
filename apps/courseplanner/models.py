@@ -20,13 +20,6 @@ def get_time():
     return datetime.datetime.utcnow()
 
 
-### Define your table below
-#
-# db.define_table('thing', Field('name'))
-#
-## always commit your models to avoid problems later
-
-
 csu_schools = [
     ('California State University, Bakersfield', 'CSUB', 'California', 'CA'),
     ('California State University, Channel Islands', 'CSUCI', 'California', 'CA'),
@@ -62,6 +55,9 @@ uc_schools = [
 
 
 def add_california_schools():
+    """
+    Helper function to add California State University and University of California schools to the database
+    """
     for school_name, abbr, state, state_abbr in csu_schools:
         school = db.school(name=school_name)
         if school:
@@ -78,6 +74,7 @@ def add_california_schools():
             db.school.insert(name=school_name, abbr=abbr,
                              state=state, state_abbr=state_abbr)
 
+#Database table to represent school data
 db.define_table(
     "school",
     Field("name", type='string'),
@@ -86,6 +83,7 @@ db.define_table(
     Field("state_abbr", type="string"),
 )
 
+#Database table to represent the course data that a user can create
 db.define_table(
     "course",
     Field("name", type='string'),
@@ -102,6 +100,7 @@ db.define_table(
 db.course.created_by.readable = db.course.created_by.writable = False
 db.course.id.readable = db.course.id.writable = False
 
+#Database table to represent custom student data that is tied to the user profile.
 db.define_table(
     "student",
     Field("user_id", 'reference auth_user',writable=False,readable=True),
@@ -112,6 +111,7 @@ db.define_table(
     Field("shared_planner", type="boolean", default=False)
 )
 
+#Database table to represent an enrollment for a student.
 db.define_table(
     "course_taken",
     Field("user_id", 'reference auth_user',writable=False,readable=False, default=lambda: auth.user_id),
@@ -145,14 +145,21 @@ db.define_table(
 
 db.student.id.writable = False
 
-db.commit()
-
-
 def generate_random_string(length):
+    """
+    Generates pseudorandom strings of a given length. 
+    Helper function for generate_random_string() and insert_random_courses().
+    Parameters:
+        length: length of the string to be generated
+    """
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for _ in range(length))
 
 def generate_random_course():
+    """
+    Helper function for insert_random_courses()
+    Generates pseudorandom course data based off a few lists of possible values. 
+    """
     course_types = ['ART', 'BIO', 'CHEM', 'CSE', 'ENG', 'HIST', 'MATH', 'PHYS', 'PSYC']
     professors = ["John Doe", "Jane Smith", "David Johnson", "Emily Davis", "Michael Brown"]
     name = generate_random_string(8) + " Course"
@@ -176,11 +183,16 @@ def generate_random_course():
     }
 
 def insert_random_courses(num_courses):
+    """
+    Helper function to create randomized course data for testing purposes, courses get created to current user
+    Parameters:
+        num_courses: number of courses to insert into database
+    """
     for _ in range(num_courses):
         course_data = generate_random_course()
         print("Inserting course",course_data )
         db.course.insert(**course_data)
 
-add_california_schools()
+#add_california_schools()
 
 db.commit()

@@ -25,15 +25,12 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-import datetime
-import random
 
-from py4web import action, request, abort, redirect, URL, Field
-from yatl.helpers import A
-from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from py4web import action, request, redirect, URL, Field
+from .common import db, session, auth
 from py4web.utils.url_signer import URLSigner
-from py4web.utils.form import Form, FormStyleDefault,FormStyleBulma,SelectWidget
-from .models import insert_random_courses, get_username,csu_schools,uc_schools
+from py4web.utils.form import Form, FormStyleBulma
+from .models import csu_schools
 from pydal.validators import *
 
 url_signer = URLSigner(session)
@@ -49,10 +46,6 @@ def index():
         redirect(URL('user/profile'))
     courses = db(db.course).select().as_list()
     curr_user = db.auth_user(auth.user_id)
-    #db(db.course).delete()
-    #db(db.course_taken).delete()
-    #insert_random_courses(20)
-    print(auth.user_id)
     return dict(
         courses=courses,
         curr_user=curr_user,
@@ -65,6 +58,12 @@ def index():
 @action('course/create', method=["GET", "POST"])
 @action.uses('course.html', db, auth.user, url_signer)
 def create_course():
+    """
+    Form for creating a course. Adds in custom class for offering to make it a multi select. 
+    Form fields are all the fields in course table.
+    return data is:
+        form = py4web form generation for adding a course
+    """
     form = Form(db.course, deletable=False, formstyle=FormStyleBulma)
     form.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
     form.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
@@ -75,6 +74,12 @@ def create_course():
 @action('course/edit/<courseId:int>', method=["GET", "POST"])
 @action.uses('course.html', db, session, auth.user, url_signer)
 def edit_course(courseId=None):
+    """
+    Form generation for editing a course. Takes in courseId which is required and gets course info to display on screen
+    Form fields are all the fields in course_taken table.
+    return data is:
+        form = py4web form generation for editing a course
+    """
     assert courseId is not None
     course = db.course[courseId]
     if(course.created_by != auth.user_id):
@@ -91,6 +96,11 @@ def edit_course(courseId=None):
 @action('course/taken/edit/<course_takenId:int>', method=["GET", "POST"])
 @action.uses('course.html', db, session, auth.user, url_signer)
 def edit_course_taken(course_takenId=None):
+    """
+    Form generation for editing a enrollment in a course. Takes in course_takenId which is required and gets course info to display on screen
+    return data is:
+        form = py4web form generation for editing a course_taken
+    """
     assert course_takenId is not None
     course_taken = db.course_taken[course_takenId]
     if(course_taken.user_id != auth.user_id):
@@ -116,6 +126,11 @@ def get_courses():
 @action('course/all', method=["GET"])
 @action.uses('courses_list.html', db, auth.user, url_signer)
 def course_list():
+    """
+    Gets all the courses created by the user and returns them as rows.
+    return data is:
+        rows = query results of all courses created by user
+    """
     user = auth.get_user()
     rows = db(db.course.created_by == user["id"]).select()
     for row in rows:
@@ -125,12 +140,15 @@ def course_list():
 @action('course/history', method=["GET", "POST"])
 @action.uses('course_history.html', db, auth.user, url_signer)
 def course_history():
+    """
+    Gets all the enrollments that the user has and returns then as rows alongside course data.
+    return data is:
+        rows = query results of all enrollments joined with course table
+    """
     user = auth.get_user()
     rows = db(db.course_taken.user_id == user["id"]).select(db.course_taken.ALL, db.course.ALL,
                                                       join=db.course_taken.on(db.course_taken.course_id == db.course.id))
     for row in rows:
-        print("course taken is:",row["course_taken"])
-        print("\nCourse is", row["course"],"\n\n")
         row["course"]["offering"] = ", ".join(row["course"]["offering"])
     return dict(rows=rows)
 
@@ -211,6 +229,16 @@ def edit_course():
 @action("course/search", method=["GET","POST"])
 @action.uses('search_course.html',db,session, auth.user)
 def search_course():
+    """
+    Main method for search page. This method will handle the search form and return the results.
+    Creates py4web Form 'searchForm''based on course table fields.
+    Creates list of field names to be used in YATL template editing
+    Handles accepted forms by creating a query based on the form data and returning the results. 
+    return data is:
+    searchForm = py4web Form object
+    DETAIL_FIELDS = list of field names
+    results = query results of all courses that match the search criteria
+    """
     results = []
     
     #This is so the course option always has a value
@@ -218,6 +246,7 @@ def search_course():
     if(request.forms.get('number_options') != None):
         option = request.forms.get('number_options')
     
+    #Create fields list for form
     fields =[Field("course_name", default=request.forms.get('course_name'), type='string'),
             Field("number_options", default=option, type="string",requires=IS_IN_SET(['Exactly', 'Contains', 'Less than or equal to', 'Greater than or equal to'])),
             Field("course_number", default=request.forms.get('course_number'), type="integer"),
@@ -225,7 +254,6 @@ def search_course():
             Field("offering",default=request.forms.get('offering'),type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
             Field("year", default=request.forms.get('year'), type="integer"),]
     DETAIL_FIELDS = [field.name for field in fields if field.name != "number_options"]
-    print("DETAIL_FIELDS is", DETAIL_FIELDS)
     searchForm = Form(
         fields,
         csrf_session=session,
@@ -237,12 +265,11 @@ def search_course():
     searchForm.structure.find('[name=year]')[0]['_type'] = 'number'
     searchForm.structure.find('[name=course_number]')[0]['_type'] = 'number'
     searchForm.custom.submit['_@click'] = 'Search()'  # Add custom inline CSS styles to the button
-    #print(searchForm.structure)
     searchForm.structure.find('form')[0]['_id']= 'searchFormId'
+
     #I am not sure why creating the form adds in a whitespace elemnt but it does ant therefore this must be added to delete it
     searchForm.custom.widgets['number_options'][0] =''
     searchForm.custom.widgets['course_number']["_placeholder"] = 'Course #'
-    #print("searchForm.custom.submit is", searchForm.custom.submit)
     ShowSearch = True
     if searchForm.accepted:
         query = db.course.created_by == auth.user_id
@@ -262,12 +289,16 @@ def search_course():
             number_value = searchForm.vars['course_number']
             
             if number_option == 'Exactly':
+                #Ensures results have course number exactly that of the search
                 query &= (db.course.number == number_value)
             elif number_option == 'Contains':
+                #Ensures results have course number that contains the numbers as in the search box
                 query &= (db.course.number.like(f'%{number_value}%'))
-            elif number_option == 'Less than or equal to':
+            elif number_option == 'Greater than or equal to':
+                #Ensures results have course number that is greater than or equal to the number in the search box
                 query &= (db.course.number > number_value)
             elif number_option == 'Less than or equal to':
+                #Ensures results have course number that is less than or equal to the number in the search box
                 query &= (db.course.number < number_value)
 
         #check for course number
@@ -290,8 +321,7 @@ def search_course():
             #Check to see if user is enrolled in course, if so prevent deletion and also prevent adding to planner
             is_not_enrolled = len(db((db.course_taken.course_id == result["id"]) & (db.course_taken.user_id == auth.user_id)).select().as_list()) == 0
             result["is_not_enrolled"] = is_not_enrolled
-        ShowSearch = False
-    return dict(searchForm=searchForm,results=results,ShowSearch=ShowSearch,DETAIL_FIELDS=DETAIL_FIELDS)
+    return dict(searchForm=searchForm,results=results,DETAIL_FIELDS=DETAIL_FIELDS)
 
 @action("course/add", method="POST")
 @action.uses(db, auth.user)
@@ -302,8 +332,6 @@ def add_courses():
         if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
             return "Course is already taken"
         data = db(db.course.id == courseId).select().as_list()
-        print(data)
-        print(courseId)
         
         db.course_taken.insert(
             course_id=courseId,
@@ -317,15 +345,17 @@ def add_courses():
 @action("course/add/<courseId:int>", method="GET")
 @action.uses(db, session,auth.user)
 def add_course(courseId=None):
+    """
+    add_course() enrolls the user in a course which will then appear in the users planner
+    return data:
+        none 
+    """
     assert courseId is not None
-    print("request is ",request)
-    print("request.json is ",request.query)
     offeringSelected = request.query.get('offering')
     enrollmentStatus = request.query.get('enrollmentStatus')
     yearTaken = request.query.get('yearTaken')
     if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
         return "Course is already taken"
-    data = db(db.course.id == courseId).select().as_list()
     db.course_taken.insert(
         course_id=courseId,
         user_id = auth.user_id,
@@ -334,7 +364,6 @@ def add_course(courseId=None):
         status=enrollmentStatus,
         is_enrolled=True if enrollmentStatus == "Enrolled" else False,
     )
-    print("ADDED COURSE")
     #redirect(URL("course/search"))
     return "ok"
 
