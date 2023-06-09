@@ -1,0 +1,50 @@
+[[extend "layout.html"]]
+
+<section class="section is-half" id="vue-target" v-cloak>
+    <article class="message is-info">
+        <div class="message-body">
+            This page shows the courses that you have the status of "enrolled","taken","withdrawn","dropped".
+            <br>Use this page to edit or delete these courses from your account. 
+        </div>
+      </article>
+      <article class="message is-warning">
+        <div class="message-body">
+            Note that deleting a course on this page will only remove your enrollment. To delete the course itself go to the course search page.
+        </div>
+      </article>
+
+
+    <table id="table" class="table is-striped is-fullwidth">
+        <thead>
+            <th><abbr title="Abbreviation">Course</abbr></th>
+            <th>Description</th>
+            <th>Term</th>
+            <th>Final Grade</th>
+            <th>Status</th>
+            <th></th>
+        </thead>
+        <tbody>
+            [[for row in rows:]]
+            <tr>
+                <td>[[=row.course.abbreviation]] [[=row.course.number]] </td>
+                <td>[[=row.course.description]]</td>
+                <td>[[=row.course_taken.year]] [[=row.course_taken.season]]</td>
+                <td>[[=row.course_taken.final_grade]]</td>
+                <td>[[=row.course_taken.status]]</td>
+                <td>
+                    <a class="button" @click="deleteCourseTaken([[=row.course_taken.id]])">
+                        <span class="icon"><i class="fa fa-fw fa-trash has-text-danger" title="Delete"></i></span>
+                      </a>
+                </td>
+            </tr>
+            [[pass]]
+    
+        </tbody>
+    </table>
+
+    
+</section>
+
+[[block page_scripts]]
+<script src="js/course_history.js"></script>
+[[end]]
