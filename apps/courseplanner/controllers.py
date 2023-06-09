@@ -38,7 +38,6 @@ from pydal.validators import *
 
 url_signer = URLSigner(session)
 
-
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
@@ -46,7 +45,7 @@ def index():
     if student == []:
         db.student.insert(user_id=auth.user_id)
     student = db(db.student.user_id == auth.user_id).select().as_list()
-    if student[0]['major'] is None:
+    if student[0]['major'] is None and student[0]['school_id'] is None:
         redirect(URL('user/profile'))
     courses = db(db.course).select().as_list()
     curr_user = db.auth_user(auth.user_id)
@@ -62,7 +61,6 @@ def index():
         edit_course_url=URL('course/edit', signer=url_signer),
         share_courses_url= URL('share_courses', signer=url_signer),
     )
-
 
 @action('course/create', method=["GET", "POST"])
 @action.uses('course.html', db, auth.user, url_signer)
@@ -123,25 +121,6 @@ def course_list():
     for row in rows:
         row["offering"] = ", ".join(row["offering"])
     return dict(rows=rows)
-@action('get_planners', method="GET")
-@action.uses(db, auth.user, url_signer)
-def get_planners():
-    user_id = request.params.get('user_id')
-    courses = db(db.course).select().as_list()
-    courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
-    #print(db(db.course_taken).select().as_list())
-    return dict(
-        courses=courses,
-        courses_taken=courses_taken
-    )
-
-@action('share')
-@action.uses('share.html', db, auth.user, url_signer)
-def share():
-    return dict(
-        get_planners_url= URL('get_planners', signer=url_signer),
-        get_shared_users_url= URL('get_shared_users', signer=url_signer),
-    )
 
 @action('course/history', method=["GET", "POST"])
 @action.uses('course_history.html', db, auth.user, url_signer)
@@ -456,13 +435,6 @@ def me():
     x = db(query).select().as_list()[0]
     return { **x["auth_user"], **x["student"] }
 
-
-@action('share_courses', method="POST")
-@action.uses(db, auth.user, url_signer)
-def share_courses():
-    db(db.student.user_id == auth.user_id).update(shared_planner=True)
-    return "ok"
-
 def add_california_schools():
     for school_name, abbr, state, state_abbr in csu_schools:
         school = db.school(name=school_name)
@@ -472,11 +444,48 @@ def add_california_schools():
             db.school.insert(name=school_name, abbr=abbr,
                              state=state, state_abbr=state_abbr)
 
+#controller for the share.html page
+@action('share')
+@action.uses('share.html', db, auth.user, url_signer)
+def share():
+    return dict(
+        get_planners_url= URL('get_planners', signer=url_signer),
+        get_shared_users_url= URL('get_shared_users', signer=url_signer),
+    )
+
+#controller to get information on a student and what they have in their planner
+@action('get_planners', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_planners():
+    user_id = request.params.get('user_id')
+    courses = db(db.course).select().as_list()
+    courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
+    student = db(db.student.user_id == user_id).select().as_list()
+    school = db(db.school.id == student[0]['school_id']).select().as_list()
+    curr_user = db(db.auth_user.id == user_id).select().as_list()
+    return dict(
+        courses=courses,
+        courses_taken=courses_taken,
+        student=student,
+        school=school,
+        name=curr_user[0]['username']
+    )
+
+#controller to update if a student wishes to share their planner
+@action('share_courses', method="POST")
+@action.uses(db, auth.user, url_signer)
+def share_courses():
+    db(db.student.user_id == auth.user_id).update(shared_planner=True)
+    return "ok"
+
+#controller to get the list of users that shared their planner
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
     users = db((db.student.user_id != auth.user_id) & (db.student.shared_planner == True)).select().as_list()
     for u in users:
         get_name = db(db.auth_user.id == u['user_id']).select().as_list()
+        get_school = db(db.school.id == u['school_id']).select().as_list()
         u['name'] = get_name[0]['username']
+        u['school'] = get_school[0]['abbr']
     return dict(users=users)
