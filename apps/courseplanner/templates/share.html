@@ -55,17 +55,17 @@
     <div class="column is-one-third has-background-light">
       
       <div v-if="selected_mode == 0">
-        <button @click="selected_mode = 0" class="button is-link">Search by User</button>
-        <button @click="selected_mode = 1" class="button">Search by Major</button>
+        <button @click="selected_mode = 0; search()" class="button is-link">Search by User</button>
+        <button @click="selected_mode = 1; search()" class="button">Search by Major</button>
       </div>
       <div v-else>
-        <button @click="selected_mode = 0" class="button">Search by User</button>
-        <button @click="selected_mode = 1" class="button is-link">Search by Major</button>
+        <button @click="selected_mode = 0; search()" class="button">Search by User</button>
+        <button @click="selected_mode = 1; search()" class="button is-link">Search by Major</button>
       </div>
 
       <div class="field mt-3">
         <p class="control has-icons-right">
-          <input class="input" type="text" v-model="query" keyup="search" placeholder="Search">
+          <input class="input" type="text" v-model="query" @keyup="search" placeholder="Search">
           <span class="icon is-small is-right clickable" @click="query=&quot;&quot;">
             <i class="fa fa-times-circle"></i>
           </span>
@@ -73,7 +73,7 @@
       </div>
       
       <div v-if="query.length>0">
-        <div v-for="u in searched_users">
+        <div v-for="u in searched">
           <div class="field has-addons mb-3">
             <div v-if="u.user_id == selected_id">
               <p class="control">

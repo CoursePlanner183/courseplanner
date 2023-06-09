@@ -116,7 +116,7 @@ def get_planners():
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
-    print(db(db.student).select().as_list())
+    #print(db(db.course_taken).select().as_list())
     return dict(
         courses=courses,
         courses_taken=courses_taken

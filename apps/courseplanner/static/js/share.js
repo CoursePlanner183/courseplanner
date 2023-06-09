@@ -12,7 +12,7 @@ let init = (app) => {
         year3: [],
         year4: [],
         users: [],
-        searched_users: [],
+        searched: [],
         selected_id: -1,
         selected_mode: 0,
         query: "",
@@ -39,10 +39,7 @@ let init = (app) => {
             app.vue.planners = app.enumerate(response.data.courses_taken)
             let courses = app.enumerate(response.data.courses);
             for (let i = 0; i < app.vue.planners.length; i++) {
-                if (app.vue.planners[i]['year'] > currentYear) {
-                    year+=1;
-                    currentYear = app.vue.planners[i]['year'];
-                }
+                year = app.vue.planners[i]['year'];
                 let course = null;
                 for (let j = 0; j < courses.length; j++) {
                     if (courses[j]['id'] == app.vue.planners[i]['course_id']) {
@@ -53,7 +50,7 @@ let init = (app) => {
                 }
                 
                 switch (year) {
-                    case 1:
+                    case "First Year":
                         switch (app.vue.planners[i]['season']) {
                             case "Fall":
                                 years[0][0] = years[0][0].concat(course, "\n")
@@ -69,7 +66,7 @@ let init = (app) => {
                                 break;
                         }
                         break;
-                    case 2:
+                    case "Second Year":
                         switch (app.vue.planners[i]['season']) {
                             case "Fall":
                                 years[1][0] = years[1][0].concat(course, "\n")
@@ -85,7 +82,7 @@ let init = (app) => {
                                 break;
                         }
                         break;
-                    case 3:
+                    case "Third Year":
                         switch (app.vue.planners[i]['season']) {
                             case "Fall":
                                 years[2][0] = years[2][0].concat(course, "\n")
@@ -101,7 +98,7 @@ let init = (app) => {
                                 break;
                         }
                         break;
-                    case 4:
+                    case "Fourth Year":
                         switch (app.vue.planners[i]['season']) {
                             case "Fall":
                                 years[3][0] = years[3][0].concat(course, "\n")
@@ -128,21 +125,30 @@ let init = (app) => {
             console.log(app.vue.year2)
             console.log(app.vue.year3)
             console.log(app.vue.year4)
-            console.log(app.vue.searched_users)
             //Todo add functionality
         });
     }
 
     app.search = function() {
-        let toSearch = app.vue.query.toLowerCase()
-        let lowerUser = "";
-        app.vue.searched_users = []
-        for (let i = 0; i < app.vue.users.length; i++) {
-            lowerUser = app.vue.users[i].name.toLowerCase();
-            if (lowerUser.startsWith(toSearch)) {
-                app.vue.searched_users.push(app.vue.users[i]);
+        let search = app.vue.query.toLowerCase()
+        app.vue.searched = []
+        if (app.vue.selected_mode == 0) {
+            for (let i = 0; i < app.vue.users.length; i++) {
+                let lowercase = app.vue.users[i].name.toLowerCase();
+                if (lowercase.startsWith(search)) {
+                    app.vue.searched.push(app.vue.users[i]);
+                }
             }
         }
+        else {
+            for (let i = 0; i < app.vue.users.length; i++) {
+                lowercase = app.vue.users[i].major.toLowerCase();
+                if (lowercase.startsWith(search)) {
+                    app.vue.searched.push(app.vue.users[i]);
+                }
+            }
+        }
+        
     }
 
     // This contains all the methods.
