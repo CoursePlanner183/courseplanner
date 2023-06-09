@@ -35,49 +35,43 @@
                             <span>Share</span>
                         </a>
                     </h2>
+                    <h2 id="no_table">
+                        Add a course to your planner. You can add a course by going to the course search page.
+                    </h2>
                     <!-- Current courses list goes here -->
-                    <table id="table" class="table is-striped is-fullwidth" hidden>
-                        <thead>
-                            <th></th>
-                            <th>Fall</th>
-                            <th>Winter</th>
-                            <th>Spring</th>
-                            <th>Summer</th>
-                        </thead>
-                        <tbody id="planner_body">
-                            <tr id="first_year">
-                                <td class="has-text-weight-bold">1st Year</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <tr id="second_year">
-                                    <td class="has-text-weight-bold">2nd Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="third_year">
-                                    <td class="has-text-weight-bold">3rd Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="fourth_year">
-                                    <td class="has-text-weight-bold">4th Year</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                        </tbody>
-                    </table>
-                    <h2 id="no_table">Add a course to your planner.</h3>
-
+                    <div id="table">
+                        <table class="table is-striped is-fullwidth">
+                            <thead>
+                                <th></th>
+                                <th>Fall</th>
+                                <th>Winter</th>
+                                <th>Spring</th>
+                                <th>Summer</th>
+                            </thead>
+                            <tbody id="planner_body">
+                            </tbody>
+                        </table>
+                        <a id="add_year_btn" class="button is-primary" @click="add_year()">
+                            <span>Add year</span>
+                        </a>
+                        <a id="delete_year_btn" class="button is-primary" @click="delete_year()">
+                            <span>Delete Year</span>
+                        </a>
+                    </div>
                 </div>
             </section>
+        </div>
+
+        <div style="display:none">
+            <table id="year_template">
+                <tr>
+                    <td class="has-text-weight-bold"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
 
 

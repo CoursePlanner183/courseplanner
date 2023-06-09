@@ -42,46 +42,29 @@ let init = (app) => {
     app.updatePlanner = function() {
         if (app.vue.courses_taken.length == 0) {
             console.log("No courses taken");
+            document.getElementById("table").style.visibility = "hidden";
+            document.getElementById("no_table").style.visibility = "visible";
         } else {
-            document.getElementById("table").hidden = false;
-            document.getElementById("no_table").hidden = true;
+            document.getElementById("table").style.visibility = "visible";
+            document.getElementById("no_table").style.visibility = "hidden";
 
-            let lowest_year = Number.MAX_VALUE;
-            for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].course_id;
-                /// Finds course from courses
-                course = null;
-                for (index in app.vue.courses) {
-                    if (app.vue.courses[index].id == courseid) {
-                        course = app.vue.courses[index];
-                    }
-                }
-                if (course.year < lowest_year) {
-                    lowest_year = course.year;
-                }
+            // Minimum of four years in planner
+            while (document.getElementById("planner_body").childElementCount < 4) {
+                app.add_year();
             }
 
-            // Adds years to planner
-            document.getElementById("first_year").firstChild.innerHTML = lowest_year;
-            document.getElementById("second_year").firstChild.innerHTML = lowest_year + 1;
-            document.getElementById("third_year").firstChild.innerHTML = lowest_year + 2;
-            document.getElementById("fourth_year").firstChild.innerHTML = lowest_year + 3;
+            // Hides Add Year btn if there are 6 years. Hides Delete Year btn if there are 4 years
+            if (document.getElementById("planner_body").childElementCount == 4) {
+                document.getElementById("delete_year_btn").style.visibility = "hidden";
+            } else if (document.getElementById("planner_body").childElementCount == 6) {
+                document.getElementById("add_year_btn").style.visibility = "hidden";
+            }
 
-            // Adds courses to planner
+            // Adds course to planner
             for (index in app.vue.courses_taken) {
-                courseid = app.vue.courses_taken[index].course_id;
-
-                // Finds course from courses
-                course = null;
-                for (index in app.vue.courses) {
-                    if (app.vue.courses[index].id == courseid) {
-                        course = app.vue.courses[index];
-                    }
-                }
-
-                // Offering starts at 1 because the first column is empty
+                // offering starts at 1 because the first column is empty
                 let offering = null;
-                switch (course.offering) {
+                switch (app.vue.courses_taken[index].season) {
                     case "Fall":
                         offering = 1;
                         break;
@@ -96,11 +79,105 @@ let init = (app) => {
                         break;
                 }
 
+                // year_taken starts at 1 because the first column is year title
+                let year_taken = null;
+                switch (app.vue.courses_taken[index].year) {
+                    case "First Year":
+                        year_taken = 1;
+                        break;
+                    case "Second Year":
+                        year_taken = 2;
+                        break;
+                    case "Third Year":
+                        year_taken = 3;
+                        break;
+                    case "Fourth Year":
+                        year_taken = 4;
+                        break;
+                    case "Fifth Year":
+                        year_taken = 5;
+                        break;
+                    case "Sixth Year":
+                        year_taken = 6;
+                        break;
+                }
+
+                // Adds years if there isn't enough years/rows in planner
+                while (document.getElementById("planner_body").childElementCount < year_taken) {
+                    app.add_year();
+                }
+
+                // Finds course from courses
+                courseid = app.vue.courses_taken[index].course_id;
+                course = null;
+                for (index in app.vue.courses) {
+                    if (app.vue.courses[index].id == courseid) {
+                        course = app.vue.courses[index];
+                    }
+                }
+
                 // Creates a course element and adds it to the planner
                 let course_element = document.createElement("p");
                 course_element.innerHTML = course.name;
-                document.getElementById("planner_body").children[course.year - lowest_year].children[offering].append(course_element);
+                document.getElementById("planner_body").children[year_taken-1].children[offering].append(course_element);
             }
+
+        }
+    };
+
+    // Adds a year to planner. Maximum of 6 years. Adjusts Add/Delete Year btn accordingly
+    app.add_year = function() {
+        let template_clone = document.getElementById("year_template").firstChild.firstChild.cloneNode(true);
+        template_clone.firstChild.textContent = "Another Year"
+        document.getElementById("planner_body").appendChild(template_clone);
+
+        //  Adds year name to planner
+        switch (document.getElementById("planner_body").childElementCount) {
+            case 1:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "First Year"
+                break;
+            case 2:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "Second Year"
+                break;
+            case 3:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "Third Year"
+                break;
+            case 4:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "Fourth Year"
+                break;
+            case 5:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "Fifth Year"
+                break;
+            case 6:
+                document.getElementById("planner_body").lastElementChild.firstChild.textContent = "Sixth Year"
+                break;
+        }
+
+        if (document.getElementById("planner_body").childElementCount > 4) {
+            document.getElementById("delete_year_btn").style.visibility = "visible";
+        }
+        if (document.getElementById("planner_body").childElementCount == 6) {
+            document.getElementById("add_year_btn").style.visibility = "hidden";
+        }
+    };
+
+    // Deletes a year to planner. Minimum of 4 years. Adjusts Add/Delete Year btn accordingly
+    app.delete_year = function() {
+
+        //  Exit function if there is class in row to be deleted
+        for (let i = 1; i<document.getElementById("planner_body").lastElementChild.childElementCount; i++) {
+            if (document.getElementById("planner_body").lastElementChild.children[i].innerHTML != "") {
+                alert("There is a course in the row you are trying to delete. Please delete the course first. You can delete a course in course enrollment history")
+                return;
+            }
+        }
+
+        document.getElementById("planner_body").removeChild(document.getElementById("planner_body").lastElementChild);
+        if (document.getElementById("planner_body").childElementCount < 6) {
+            document.getElementById("add_year_btn").style.visibility = "visible";
+        }
+        if (document.getElementById("planner_body").childElementCount == 4) {
+            document.getElementById("delete_year_btn").style.visibility = "hidden";
         }
     };
 
@@ -115,6 +192,8 @@ let init = (app) => {
         updatePlanner: app.updatePlanner,
         deleteCourses: app.deleteCourses,
         share_courses: app.share_courses,
+        add_year: app.add_year,
+        delete_year: app.delete_year,
     };
 
     // This creates the Vue instance.
