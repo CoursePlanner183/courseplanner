@@ -16,6 +16,7 @@ let init = (app) => {
         selected_id: -1,
         selected_mode: 0,
         query: "",
+        intro_mode: 0,
     };    
     
     app.enumerate = (a) => {
