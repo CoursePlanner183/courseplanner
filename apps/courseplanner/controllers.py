@@ -42,13 +42,6 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
-    student = db(db.student.user_id == auth.user_id).select().as_list()
-    if student == []:
-        db.student.insert(user_id=auth.user_id)
-    student = db(db.student.user_id == auth.user_id).select().as_list()
-    if student[0]['major'] is None:
-        redirect(URL('user/profile'))
-
     courses = db(db.course).select().as_list()
     curr_user = db.auth_user(auth.user_id)
     #db(db.course).delete()
@@ -117,7 +110,7 @@ def get_planners():
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
-    print(db(db.student).select().as_list())
+    print(db.student)
     return dict(
         courses=courses,
         courses_taken=courses_taken
@@ -150,7 +143,7 @@ def profile():
     if request.method == "POST":
         student = { k: v for k, v in request.forms.items() if k in ['id', 'user_id', 'school_id', 'major', 'grad_start_date', 'grad_end_date']}
         db.student(student["id"]).update_record(
-            #school_id=student["school_id"],
+            school_id=student["school_id"],
             major=student["major"],
             grad_start_date=student["grad_start_date"],
             grad_end_date=student["grad_end_date"]
@@ -301,13 +294,14 @@ def add_course(courseId=None):
     print("request.json is ",request.query)
     offeringSelected = request.query.get('offering')
     enrollmentStatus = request.query.get('enrollmentStatus')
+    yearTaken = request.query.get('yearTaken')
     if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
         return "Course is already taken"
     data = db(db.course.id == courseId).select().as_list()
     db.course_taken.insert(
         course_id=courseId,
         user_id = auth.user_id,
-        year = data[0]['year'],
+        year = yearTaken,
         season = offeringSelected,
         status=enrollmentStatus,
         is_enrolled=True if enrollmentStatus == "Enrolled" else False,
@@ -416,7 +410,9 @@ def me():
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    db(db.student.user_id == auth.user_id).update(shared_planner=True)
+    curr_user = db(db.auth_user.id == auth.user_id).select().as_list()
+    username = curr_user[0]['username']
+    db.shared_planner.update_or_insert(user_id=auth.user_id, name=username)
     return "ok"
 
 def add_california_schools():
@@ -431,8 +427,5 @@ def add_california_schools():
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
-    users = db((db.student.user_id != auth.user_id) & (db.student.shared_planner == True)).select().as_list()
-    for u in users:
-        get_name = db(db.auth_user.id == u['user_id']).select().as_list()
-        u['name'] = get_name[0]['username']
+    users = db(db.shared_planner.user_id != auth.user_id).select().as_list()
     return dict(users=users)

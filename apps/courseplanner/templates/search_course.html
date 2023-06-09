@@ -89,6 +89,20 @@
                         </div>
                       </div>
                       
+                      <div class="field">
+                        <label  class="label">Year Taken</label>
+                        <div class="select" >
+                          <select v-model="selectedYearTaken">
+                            <option>First Year</option>
+                            <option>Second Year</option>
+                            <option>Third Year</option>
+                            <option>Fourth Year</option>
+                            <option>Fifth Year</option>
+                            <option>Sixth Year</option>
+                          </select>
+                        </div>
+                      </div>
+                      
                       <div class="control">
                         <button class="button is-primary" @click="addCourse([[=row.id]])">Add course</button>
                       </div>

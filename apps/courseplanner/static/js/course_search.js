@@ -9,6 +9,7 @@ let init = (app) => {
         selectedCourseId: undefined,
         selectedOffering: '',
         selectedEnrollmentStatus: '',
+        selectedYearTaken: '',
     };
 
     app.Search = () => {
@@ -21,7 +22,7 @@ let init = (app) => {
         app.vue.ShowSearch = true;
     }
     app.addCourse = function (courseId) {
-        axios.get(`../course/add/${courseId}`, {params: {offering: this.selectedOffering, enrollmentStatus: this.selectedEnrollmentStatus}} )
+        axios.get(`../course/add/${courseId}`, {params: {offering: this.selectedOffering, enrollmentStatus: this.selectedEnrollmentStatus, yearTaken: this.selectedYearTaken}} )
             .then(response => {
                 // Handle the response here (e.g., display a success message)
                 const element = this.$refs[courseId+"-add"];
@@ -56,6 +57,7 @@ let init = (app) => {
               this.selectedCourseId = null;
               this.selectedOffering = '';
               this.selectedEnrollmentStatus = '';
+              this.selectedYearTaken = '';
             } else {
               this.selectedCourseId = courseId;
             }

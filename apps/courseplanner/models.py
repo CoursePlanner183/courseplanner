@@ -109,7 +109,6 @@ db.define_table(
     Field("grad_start_date", type="date"),
     Field("grad_end_date", type="date"),
     Field("major", type="string"),
-    Field("shared_planner", type="boolean", default=False)
 )
 
 db.define_table(
@@ -119,7 +118,7 @@ db.define_table(
     Field("grade", "integer", "reference course",default=100,writable=False,readable=True),
     Field("status", type="string", requires=IS_IN_SET(['Enrolled','Taken','Withdrawn', 'Dropped'])),
     Field("season", requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-    Field("year", type="integer"),
+    Field("year",type='string',requires=IS_IN_SET(['First Year','Second Year','Third Year','Fourth Year', 'Fifth Year', 'Sixth Year'])),
     Field("final_grade", type="string"),
     Field("is_shared", type="boolean", default=False),
 )
@@ -132,6 +131,13 @@ db.define_table(
     Field("category_name", type="string"),
     Field("grade", type="float"),
     Field("weight", type="float"),
+)
+
+# temp table, can be added to student once forced profiles can be worked out.
+db.define_table(
+    "shared_planner",
+    Field("user_id", 'reference auth_user'),
+    Field("name", type="string")
 )
 
 db.student.id.writable = False
