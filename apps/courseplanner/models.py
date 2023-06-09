@@ -179,3 +179,4 @@ def insert_random_courses(num_courses):
         db.course.insert(**course_data)
 
 
+db.commit()
