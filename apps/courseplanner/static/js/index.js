@@ -41,7 +41,6 @@ let init = (app) => {
     // Checks if there are courses to add to planner. If there are, then adds courses and years.
     app.updatePlanner = function() {
         if (app.vue.courses_taken.length == 0) {
-            console.log("No courses taken");
             document.getElementById("table").style.visibility = "hidden";
             document.getElementById("no_table").style.visibility = "visible";
         } else {
@@ -210,9 +209,7 @@ let init = (app) => {
 
         axios.get("../get_courses").then(function(response) {
             app.vue.courses = app.enumerate(response.data.courses);
-            console.log("courses", app.enumerate(response.data.courses));
             app.vue.courses_taken = app.enumerate(response.data.courses_taken);
-            console.log("courses_taken", app.enumerate(response.data.courses_taken));
 
             // Updates Planner
             app.vue.updatePlanner();

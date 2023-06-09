@@ -16,9 +16,6 @@ let init = (app) => {
     app.Search = () => {
         // Get the form element
         var form = document.getElementById('searchFormId');
-        console.log(form);
-        form.vars['courseNumberOption'] = this.courseNumberOption;
-        return;
         // Make an AJAX POST request to the form action URL
         form.submit()
     }
@@ -26,9 +23,10 @@ let init = (app) => {
         app.vue.ShowSearch = true;
     }
     app.addCourse = function (courseId) {
+        // Make a request to the server to add the course with params of offering, enrollment status, and year taken
         axios.get(`../course/add/${courseId}`, {params: {offering: this.selectedOffering, enrollmentStatus: this.selectedEnrollmentStatus, yearTaken: this.selectedYearTaken}} )
             .then(response => {
-                // Handle the response here (e.g., display a success message)
+                // response is sucess so remove add button since course can only be enrolled once
                 const element = this.$refs[courseId+"-add"];
                 element.remove();
                 this.toggleCourseBox(courseId);
@@ -39,9 +37,9 @@ let init = (app) => {
     }
 
     app.deleteCourse = function (courseId) {
-        
         axios.delete(`../course/delete/${courseId}`)
             .then(response => {
+                // response is sucess so remove entire course from results list
                 const element = this.$refs[courseId+"-card"];
                 element.remove();
             })
@@ -58,6 +56,7 @@ let init = (app) => {
         deleteCourse: app.deleteCourse,
         toggleCourseBox(courseId) {
             if (this.selectedCourseId === courseId) {
+            // Resets values for add course popup page and closes current popup
               this.selectedCourseId = null;
               this.selectedOffering = '';
               this.selectedEnrollmentStatus = '';
@@ -67,6 +66,7 @@ let init = (app) => {
             }
           },
           openAddCourseBox(courseId,offering) {
+            // Sets default values for the add course popup
             this.selectedCourseId = courseId;
             if(offering != null | offering != undefined){
                 if(offering.length > 0){
