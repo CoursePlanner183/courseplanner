@@ -1,25 +1,30 @@
 [[extend "layout.html"]]
 
-
 <title>All Courses</title>
 
 <div class="section is-half" id="vue-target" v-cloak>
+
+    <!-- information box -->
     <article class="message is-info">
         <div class="message-body">
             Only public courses and courses you create will be shown here.
         </div>
     </article>
 
+    <!-- My Courses: table containing courses created on Create Course page -->
     <table id="table" class="table is-striped is-fullwidth pb-5">
+        <!-- table title -->
         <h2 class="title is-4">My Courses</h2>
+        <!-- table header -->
         <thead>
             <th><abbr title="Abbreviation">Abbr</abbr></th>
             <th>Number</th>
             <th>Description</th>
             <th>Credits</th>
             <th>Offering</th>
-            <th class="clickable has-text-link" style="text-decoration:underline;">Year offered</th>
+            <th class="clickable has-text-link" style="text-decoration:underline;">Year Offered</th>
         </thead>
+        <!-- Created Courses -->
         <tbody>
             [[for row in rows:]]
             <tr>
@@ -36,8 +41,15 @@
         </tbody>
     </table>
 
-    <table id="table" class="table is-striped is-fullwidth pt-5">
+    <!-- gap between tables -->
+    <div class="pt-5"></div>
+
+    <!-- Public Courses: table public courses for upcoming school year -->
+    <!-- (currently only supports CSE courses for the 2023-24 school year)-->
+    <table id="table" class="table is-striped is-fullwidth">
+        <!-- table title -->
         <h2 class="title is-4">Public Courses - CSE 2023-24</h2>
+        <!-- table header -->
         <thead>
             <th><abbr title="Abbreviation">Abbr</abbr></th>
             <th>Number</th>
@@ -46,6 +58,7 @@
             <th>Offering</th>
             <th class="clickable has-text-link" style="text-decoration:underline;">Year Offered</th>
         </thead>
+        <!-- CSE Courses (in order by number) -->
         <tbody>
             <tr>
                 <td>CSE 12</td>
@@ -199,8 +212,6 @@
                 <td>Fall, Winter, Spring</td>
                 <td>2023-24</td>
             </tr>
-            [[pass]]
-
         </tbody>
     </table>
 
