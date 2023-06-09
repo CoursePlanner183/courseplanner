@@ -431,7 +431,7 @@ def add_california_schools():
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
-    users = db(db.student.user_id != auth.user_id).select().as_list()
+    users = db((db.student.user_id != auth.user_id) & (db.student.shared_planner == True)).select().as_list()
     for u in users:
         get_name = db(db.auth_user.id == u['user_id']).select().as_list()
         u['name'] = get_name[0]['username']
