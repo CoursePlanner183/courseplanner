@@ -10,46 +10,60 @@
 <div class="section" id="vue-target" v-cloak>
   <!-- Put here your Vue.js template -->
 
+  
+  
   <div class="columns">
     <div class="column">
+      <div v-if="intro_mode==0">
+        <h1 class="title">
+          View a Peer's Planner
+        </h1>
+        <h2 class="subtitle">
+          Users and their major is shown on the right. To get started, click on a user to view their planner!<br><br>
+          You can search by user or by major by clicking on the corresponding buttons on the right and type your query in the search bar!
+        </h2>
+      </div>
+      <div v-else>
         <table id="table" class="table is-striped is-fullwidth">
-            <thead>
-                <th></th>
-                <th>Fall</th>
-                <th>Winter</th>
-                <th>Spring</th>
-                <th>Summer</th>
-            </thead>
-            <tbody id="planner_body">
-                <tr id="first_year">
-                    <td class="has-text-weight-bold">1st Year</td>
-                        <td style="white-space: pre;">{{year1[0]}}</td>
-                        <td style="white-space: pre;">{{year1[1]}}</td>
-                        <td style="white-space: pre;">{{year1[2]}}</td>
-                        <td style="white-space: pre;">{{year1[3]}}</td>
-                    <tr id="second_year">
-                        <td class="has-text-weight-bold">2nd Year</td>
-                        <td style="white-space: pre;">{{year2[0]}}</td>
-                        <td style="white-space: pre;">{{year2[1]}}</td>
-                        <td style="white-space: pre;">{{year2[2]}}</td>
-                        <td style="white-space: pre;">{{year2[3]}}</td>
-                    </tr>
-                    <tr id="third_year">
-                        <td class="has-text-weight-bold">3rd Year</td>
-                        <td style="white-space: pre;">{{year3[0]}}</td>
-                        <td style="white-space: pre;">{{year3[1]}}</td>
-                        <td style="white-space: pre;">{{year3[2]}}</td>
-                        <td style="white-space: pre;">{{year3[3]}}</td>
-                    </tr>
-                    <tr id="fourth_year">
-                        <td class="has-text-weight-bold">4th Year</td>
-                        <td style="white-space: pre;">{{year4[0]}}</td>
-                        <td style="white-space: pre;">{{year4[1]}}</td>
-                        <td style="white-space: pre;">{{year4[2]}}</td>
-                        <td style="white-space: pre;">{{year4[3]}}</td>
-                    </tr>
-            </tbody>
+          <thead>
+              <th></th>
+              <th>Fall</th>
+              <th>Winter</th>
+              <th>Spring</th>
+              <th>Summer</th>
+          </thead>
+          <tbody id="planner_body">
+              <tr id="first_year">
+                  <td class="has-text-weight-bold">1st Year</td>
+                      <td style="white-space: pre;">{{year1[0]}}</td>
+                      <td style="white-space: pre;">{{year1[1]}}</td>
+                      <td style="white-space: pre;">{{year1[2]}}</td>
+                      <td style="white-space: pre;">{{year1[3]}}</td>
+                  <tr id="second_year">
+                      <td class="has-text-weight-bold">2nd Year</td>
+                      <td style="white-space: pre;">{{year2[0]}}</td>
+                      <td style="white-space: pre;">{{year2[1]}}</td>
+                      <td style="white-space: pre;">{{year2[2]}}</td>
+                      <td style="white-space: pre;">{{year2[3]}}</td>
+                  </tr>
+                  <tr id="third_year">
+                      <td class="has-text-weight-bold">3rd Year</td>
+                      <td style="white-space: pre;">{{year3[0]}}</td>
+                      <td style="white-space: pre;">{{year3[1]}}</td>
+                      <td style="white-space: pre;">{{year3[2]}}</td>
+                      <td style="white-space: pre;">{{year3[3]}}</td>
+                  </tr>
+                  <tr id="fourth_year">
+                      <td class="has-text-weight-bold">4th Year</td>
+                      <td style="white-space: pre;">{{year4[0]}}</td>
+                      <td style="white-space: pre;">{{year4[1]}}</td>
+                      <td style="white-space: pre;">{{year4[2]}}</td>
+                      <td style="white-space: pre;">{{year4[3]}}</td>
+                  </tr>
+          </tbody>
         </table>
+      </div>
+        
     </div>
 
     <div class="column is-one-third has-background-light">
@@ -77,14 +91,14 @@
           <div class="field has-addons mb-3">
             <div v-if="u.user_id == selected_id">
               <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id;" class="button is-success">
+                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
                 <span>{{u.name}}: {{u.major}}</span>
                 </button>
               </p>
             </div>
             <div v-else>
               <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id;" class="button">
+                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
                 <span>{{u.name}}: {{u.major}}</span>
                 </button>
               </p>
@@ -97,14 +111,14 @@
           <div class="field has-addons mb-3">
             <div v-if="u.user_id == selected_id">
               <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id;" class="button is-success">
+                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
                 <span>{{u.name}}: {{u.major}}</span>
                 </button>
               </p>
             </div>
             <div v-else>
               <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id;" class="button">
+                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
                 <span>{{u.name}}: {{u.major}}</span>
                 </button>
               </p>
@@ -112,10 +126,6 @@
           </div>
         </div>
       </div>
-      
-      
-      
-
     </div>
   </div>
 
