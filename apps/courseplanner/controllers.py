@@ -42,6 +42,12 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
+    student = db(db.student.user_id == auth.user_id).select().as_list()
+    if student == []:
+        db.student.insert(user_id=auth.user_id)
+    if student[0]['major'] is None:
+        redirect(URL('user/profile'))
+
     courses = db(db.course).select().as_list()
     curr_user = db.auth_user(auth.user_id)
     #db(db.course).delete()
@@ -110,7 +116,7 @@ def get_planners():
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
-    print(db.student)
+    print(db(db.student).select().as_list())
     return dict(
         courses=courses,
         courses_taken=courses_taken
@@ -143,7 +149,7 @@ def profile():
     if request.method == "POST":
         student = { k: v for k, v in request.forms.items() if k in ['id', 'user_id', 'school_id', 'major', 'grad_start_date', 'grad_end_date']}
         db.student(student["id"]).update_record(
-            school_id=student["school_id"],
+            #school_id=student["school_id"],
             major=student["major"],
             grad_start_date=student["grad_start_date"],
             grad_end_date=student["grad_end_date"]
