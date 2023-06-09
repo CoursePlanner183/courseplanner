@@ -109,6 +109,7 @@ db.define_table(
     Field("grad_start_date", type="date"),
     Field("grad_end_date", type="date"),
     Field("major", type="string"),
+    Field("shared_planner", type="boolean", default=False)
 )
 
 db.define_table(
@@ -131,13 +132,6 @@ db.define_table(
     Field("category_name", type="string"),
     Field("grade", type="float"),
     Field("weight", type="float"),
-)
-
-# temp table, can be added to student once forced profiles can be worked out.
-db.define_table(
-    "shared_planner",
-    Field("user_id", 'reference auth_user'),
-    Field("name", type="string")
 )
 
 db.student.id.writable = False
