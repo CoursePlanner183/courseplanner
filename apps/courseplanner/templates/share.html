@@ -1,168 +1,170 @@
 [[extend 'layout.html']]
 
+<title>Shared Planners</title>
+
 <style>
-[v-cloak] {
-     display: none;
-}
+    [v-cloak] {
+        display: none;
+    }
 </style>
 
 
 <div class="section" id="vue-target" v-cloak>
-  <!-- Put here your Vue.js template -->
+    <!-- Put here your Vue.js template -->
 
-  
-  
-  <div class="columns">
-    <div class="column">
-      <!--Introduces the user to the page since they have not clicked on a user yet-->
-      <div v-if="intro_mode==0">
-        <h1 class="title">
-          View a Peer's Planner
-        </h1>
-        <h2 class="subtitle">
-          Users and their major is shown on the right. To get started, click on a user to view their planner! The format is [ Name | Major | University ].<br><br>
-          You can search by user or by major by clicking on the corresponding buttons on the right and typing your query in the search bar!
-        </h2>
-      </div>
-      <!--Display the chosen user's planner, as well as information like major and school-->
-      <div v-else>
-        <h1 class="title">
-          {{curr_name}}'s Planner
-        </h1>
-        <h2 class="subtitle">
-          {{curr_major}}<br>{{curr_school}}<br>{{curr_state}}
-        </h2>
-        <table id="table" class="table is-striped is-fullwidth">
-          <thead>
-              <th></th>
-              <th>Fall</th>
-              <th>Winter</th>
-              <th>Spring</th>
-              <th>Summer</th>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="has-text-weight-bold">1st Year</td>
-              <td style="white-space: pre;">{{year1[0]}}</td>
-              <td style="white-space: pre;">{{year1[1]}}</td>
-              <td style="white-space: pre;">{{year1[2]}}</td>
-              <td style="white-space: pre;">{{year1[3]}}</td>
-            </tr>
-            <tr>
-                <td class="has-text-weight-bold">2nd Year</td>
-                <td style="white-space: pre;">{{year2[0]}}</td>
-                <td style="white-space: pre;">{{year2[1]}}</td>
-                <td style="white-space: pre;">{{year2[2]}}</td>
-                <td style="white-space: pre;">{{year2[3]}}</td>
-            </tr>
-            <tr>
-                <td class="has-text-weight-bold">3rd Year</td>
-                <td style="white-space: pre;">{{year3[0]}}</td>
-                <td style="white-space: pre;">{{year3[1]}}</td>
-                <td style="white-space: pre;">{{year3[2]}}</td>
-                <td style="white-space: pre;">{{year3[3]}}</td>
-            </tr>
-            <tr>
-                <td class="has-text-weight-bold">4th Year</td>
-                <td style="white-space: pre;">{{year4[0]}}</td>
-                <td style="white-space: pre;">{{year4[1]}}</td>
-                <td style="white-space: pre;">{{year4[2]}}</td>
-                <td style="white-space: pre;">{{year4[3]}}</td>
-            </tr>
-            <!--If a student's planner has a 5th and/or 6th year course, show the row-->
-            <tr v-if="year5Mode==true">
-              <td class="has-text-weight-bold">5th Year</td>
-              <td style="white-space: pre;">{{year5[0]}}</td>
-              <td style="white-space: pre;">{{year5[1]}}</td>
-              <td style="white-space: pre;">{{year5[2]}}</td>
-              <td style="white-space: pre;">{{year5[3]}}</td>
-            </tr>
-            <tr v-if="year6Mode==true">
-              <td class="has-text-weight-bold">6th Year</td>
-              <td style="white-space: pre;">{{year6[0]}}</td>
-              <td style="white-space: pre;">{{year6[1]}}</td>
-              <td style="white-space: pre;">{{year6[2]}}</td>
-              <td style="white-space: pre;">{{year6[3]}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <!--Area that the user will be interacting with-->
-    <div class="column is-one-third has-background-light">
-      <!--Search modes-->
-      <div v-if="selected_mode == 0">
-        <button @click="selected_mode = 0; search()" class="button is-link">Search by User</button>
-        <button @click="selected_mode = 1; search()" class="button">Search by Major</button>
-      </div>
-      <div v-else>
-        <button @click="selected_mode = 0; search()" class="button">Search by User</button>
-        <button @click="selected_mode = 1; search()" class="button is-link">Search by Major</button>
-      </div>
 
-      <!--Search bar-->
-      <div class="field mt-3">
-        <p class="control has-icons-right">
-          <input class="input" type="text" v-model="query" @keyup="search" placeholder="Search">
-          <span class="icon is-small is-right clickable" @click="query=&quot;&quot;">
+    <div class="columns">
+        <div class="column">
+            <!--Introduces the user to the page since they have not clicked on a user yet-->
+            <div v-if="intro_mode==0">
+                <h1 class="title">
+                    View a Peer's Planner
+                </h1>
+                <h2 class="subtitle">
+                    Users and their major is shown on the right. To get started, click on a user to view their planner! The format is [ Name | Major | University ].<br><br> You can search by user or by major by clicking on the corresponding buttons on
+                    the right and typing your query in the search bar!
+                </h2>
+            </div>
+            <!--Display the chosen user's planner, as well as information like major and school-->
+            <div v-else>
+                <h1 class="title">
+                    {{curr_name}}'s Planner
+                </h1>
+                <h2 class="subtitle">
+                    {{curr_major}}<br>{{curr_school}}<br>{{curr_state}}
+                </h2>
+                <table id="table" class="table is-striped is-fullwidth">
+                    <thead>
+                        <th></th>
+                        <th>Fall</th>
+                        <th>Winter</th>
+                        <th>Spring</th>
+                        <th>Summer</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="has-text-weight-bold">1st Year</td>
+                            <td style="white-space: pre;">{{year1[0]}}</td>
+                            <td style="white-space: pre;">{{year1[1]}}</td>
+                            <td style="white-space: pre;">{{year1[2]}}</td>
+                            <td style="white-space: pre;">{{year1[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td class="has-text-weight-bold">2nd Year</td>
+                            <td style="white-space: pre;">{{year2[0]}}</td>
+                            <td style="white-space: pre;">{{year2[1]}}</td>
+                            <td style="white-space: pre;">{{year2[2]}}</td>
+                            <td style="white-space: pre;">{{year2[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td class="has-text-weight-bold">3rd Year</td>
+                            <td style="white-space: pre;">{{year3[0]}}</td>
+                            <td style="white-space: pre;">{{year3[1]}}</td>
+                            <td style="white-space: pre;">{{year3[2]}}</td>
+                            <td style="white-space: pre;">{{year3[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td class="has-text-weight-bold">4th Year</td>
+                            <td style="white-space: pre;">{{year4[0]}}</td>
+                            <td style="white-space: pre;">{{year4[1]}}</td>
+                            <td style="white-space: pre;">{{year4[2]}}</td>
+                            <td style="white-space: pre;">{{year4[3]}}</td>
+                        </tr>
+                        <!--If a student's planner has a 5th and/or 6th year course, show the row-->
+                        <tr v-if="year5Mode==true">
+                            <td class="has-text-weight-bold">5th Year</td>
+                            <td style="white-space: pre;">{{year5[0]}}</td>
+                            <td style="white-space: pre;">{{year5[1]}}</td>
+                            <td style="white-space: pre;">{{year5[2]}}</td>
+                            <td style="white-space: pre;">{{year5[3]}}</td>
+                        </tr>
+                        <tr v-if="year6Mode==true">
+                            <td class="has-text-weight-bold">6th Year</td>
+                            <td style="white-space: pre;">{{year6[0]}}</td>
+                            <td style="white-space: pre;">{{year6[1]}}</td>
+                            <td style="white-space: pre;">{{year6[2]}}</td>
+                            <td style="white-space: pre;">{{year6[3]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!--Area that the user will be interacting with-->
+        <div class="column is-one-third has-background-light">
+            <!--Search modes-->
+            <div v-if="selected_mode == 0">
+                <button @click="selected_mode = 0; search()" class="button is-link">Search by User</button>
+                <button @click="selected_mode = 1; search()" class="button">Search by Major</button>
+            </div>
+            <div v-else>
+                <button @click="selected_mode = 0; search()" class="button">Search by User</button>
+                <button @click="selected_mode = 1; search()" class="button is-link">Search by Major</button>
+            </div>
+
+            <!--Search bar-->
+            <div class="field mt-3">
+                <p class="control has-icons-right">
+                    <input class="input" type="text" v-model="query" @keyup="search" placeholder="Search">
+                    <span class="icon is-small is-right clickable" @click="query=&quot;&quot;">
             <i class="fa fa-times-circle"></i>
           </span>
-        </p>
-      </div>
-      
-      <!--If user is searching for someone/a major, return the list of users/major that starts with the query-->
-      <div v-if="query.length>0">
-        <div v-for="u in searched">
-          <div class="field has-addons mb-3">
-            <div v-if="u.user_id == selected_id">
-              <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
+                </p>
+            </div>
+
+            <!--If user is searching for someone/a major, return the list of users/major that starts with the query-->
+            <div v-if="query.length>0">
+                <div v-for="u in searched">
+                    <div class="field has-addons mb-3">
+                        <div v-if="u.user_id == selected_id">
+                            <p class="control">
+                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
                 <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
                 </button>
-              </p>
+                            </p>
+                        </div>
+                        <div v-else>
+                            <p class="control">
+                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <!--Default, show every user that shared their planner-->
             <div v-else>
-              <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                <div v-for="u in users">
+                    <div class="field has-addons mb-3">
+                        <div v-if="u.user_id == selected_id">
+                            <p class="control">
+                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
                 <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
                 </button>
-              </p>
+                            </p>
+                        </div>
+                        <div v-else>
+                            <p class="control">
+                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <!--Default, show every user that shared their planner-->
-      <div v-else>
-        <div v-for="u in users">
-          <div class="field has-addons mb-3">
-            <div v-if="u.user_id == selected_id">
-              <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
-              </p>
-            </div>
-            <div v-else>
-              <p class="control">
-                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let get_planners_url = "[[=XML(get_planners_url)]]";
-  let get_shared_users_url = "[[=XML(get_shared_users_url)]]"
+    let get_planners_url = "[[=XML(get_planners_url)]]";
+    let get_shared_users_url = "[[=XML(get_shared_users_url)]]"
 </script>
 <script src="js/share.js"></script>
 [[end]]
