@@ -66,6 +66,7 @@ let init = (app) => {
             this.selectedCourseId = courseId;
             this.selectedOffering = offering;
             this.selectedEnrollmentStatus = "Enrolled";
+            this.selectedYearTaken = "First Year";
           }
     };
 
