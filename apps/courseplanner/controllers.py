@@ -25,12 +25,15 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
+import datetime
+import random
 
-from py4web import action, request, redirect, URL, Field
-from .common import db, session, auth
+from yatl.helpers import A
+from py4web import action, request,abort, redirect, URL, Field
+from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from py4web.utils.form import Form, FormStyleBulma
-from .models import csu_schools
+from py4web.utils.form import Form, FormStyleDefault,FormStyleBulma,SelectWidget
+from .models import insert_random_courses, get_username,csu_schools,uc_schools
 from pydal.validators import *
 
 url_signer = URLSigner(session)
@@ -370,6 +373,11 @@ def add_course(courseId=None):
 @action("course/delete/<courseId:int>",method="DELETE")
 @action.uses(db, session,auth.user)
 def delete_course(courseId=None):
+    """
+    delete_course() deletes a course that a user has created if no user is enrolled in the course.
+    return data:
+        none 
+    """
     assert courseId is not None
     if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
         return "Cannot delete course that you have enrolled in."
@@ -381,6 +389,11 @@ def delete_course(courseId=None):
 @action("course/taken/delete/<course_takenId:int>", method="DELETE")
 @action.uses(db, session,auth.user)
 def delete_course_taken(course_takenId=None):
+    """
+    delete_course_taken() deletes a enrollment from a user and removes it from the planner.
+    return data:
+        none 
+    """
     assert course_takenId is not None
     query = db(db.course_taken.id == course_takenId).select().first()
     if query["user_id"] != auth.user_id:
@@ -464,14 +477,8 @@ def me():
     x = db(query).select().as_list()[0]
     return { **x["auth_user"], **x["student"] }
 
-def add_california_schools():
-    for school_name, abbr, state, state_abbr in csu_schools:
-        school = db.school(name=school_name)
-        if school:
-            school.update_record(abbr=abbr, state=state, state_abbr=state_abbr)
-        else:
-            db.school.insert(name=school_name, abbr=abbr,
-                             state=state, state_abbr=state_abbr)
+
+    
 
 #controller for the share.html page
 @action('share')
