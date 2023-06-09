@@ -45,7 +45,7 @@
 
               </span>
             </div>
-            <div class="result-details">
+            <div class="result-details" v-cloak>
               <p><strong>Name:</strong> [[=row.name]]</p>
               <p><strong>Description:</strong> [[=row.description]]</p>
               <p><strong>Credits:</strong> [[=row.credits]]</p>
@@ -58,7 +58,7 @@
               </p>
               <p><strong>Offering(s):</strong> [[=', '.join(row.offering)]]</p>
               <p><strong>Year:</strong> [[=row.year]]</p>
-              <div  class="course-box"  v-if="selectedCourseId == [[=row.id]]" v-cloak>
+              <div class="course-box"  v-if="selectedCourseId == [[=row.id]]">
                 <div class="modal">
                   <div class="modal-content">
                     <div class="contact-form">
@@ -113,7 +113,7 @@
   <style>
     [v-cloak] {
             display: none;
-        }
+    }
     .section {
       display: flex;
       justify-content: center;
