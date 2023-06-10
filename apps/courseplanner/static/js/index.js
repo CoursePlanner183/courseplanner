@@ -219,12 +219,6 @@ let init = (app) => {
             // Updates Planner
             app.vue.updatePlanner();
         });
-        axios.get("../get_user").then(function(response) {
-            app.vue.curr_user.first_name = response.data.first_name;
-            app.vue.curr_user.last_name = response.data.last_name;
-
-            // ...
-        });
 
         //get bool of if user has shared their planner
         axios.get(get_shared_status_url).then(function (response) {
