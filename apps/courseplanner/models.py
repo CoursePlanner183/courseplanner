@@ -92,7 +92,7 @@ db.define_table(
     Field("description", type="text",required=True,requires=IS_NOT_EMPTY()),
     Field("credits", type="integer",required=True,requires=IS_INT_IN_RANGE(-2**31, 2**31)),
     Field("instructor", type="string",required=True,requires=IS_NOT_EMPTY()),
-    Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True,required=True),
+    Field("offering",type='list:string',default=['Fall'],requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True,required=True),
     Field("year","integer",required=True,requires=IS_INT_IN_RANGE(-2**31, 2**31)),
     Field('created_by', 'reference auth_user', default=lambda: auth.user_id)
 )

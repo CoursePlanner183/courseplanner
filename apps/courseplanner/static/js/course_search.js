@@ -29,6 +29,9 @@ let init = (app) => {
                 // response is sucess so remove add button since course can only be enrolled once
                 const element = this.$refs[courseId+"-add"];
                 element.remove();
+                
+                const deleteElement = this.$refs[courseId+"-delete"];
+                deleteElement.remove();
                 this.toggleCourseBox(courseId);
             })
             .catch(error => {
