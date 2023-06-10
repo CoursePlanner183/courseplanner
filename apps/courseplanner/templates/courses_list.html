@@ -36,14 +36,7 @@
         </thead>
         <!-- Created Courses -->
         <tbody>
-            <!-- [[for row in rows:]] -->
             <tr v-for="row in rows">
-                <!-- <td>[[=row.abbreviation]]</td>
-                <td>[[=row.number]]</td>
-                <td>[[=row.description]]</td>
-                <td>[[=row.credits]]</td>
-                <td>[[=row.offering]]</td>
-                <td>[[=row.year]]</td> -->
                 <td>{{row.abbreviation}}</td>
                 <td>{{row.number}}</td>
                 <td>{{row.description}}</td>
@@ -51,8 +44,6 @@
                 <td>{{row.offering}}</td>
                 <td>{{row.year}}</td>
             </tr>
-            <!-- [[pass]] -->
-
         </tbody>
     </table>
 
