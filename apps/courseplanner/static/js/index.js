@@ -12,6 +12,7 @@ let init = (app) => {
         deleteMode: false,
         selectedDelete: [],
         curr_user: {},
+        shared_status: false,
     };
 
     app.enumerate = (a) => {
@@ -180,9 +181,13 @@ let init = (app) => {
         }
     };
 
-    // Set is_shared to true for all courses in course_taken from user
+    // Set a student's shared_planner to true/false based on the previous status.
     app.share_courses = async function() {
-        axios.post(share_courses_url);
+        axios.post(share_courses_url, {
+            newStatus: !app.vue.shared_status
+        }).then(function(response) {
+            app.vue.shared_status = !app.vue.shared_status;
+        })
     };
 
     // This contains all the methods.
@@ -219,6 +224,11 @@ let init = (app) => {
             app.vue.curr_user.last_name = response.data.last_name;
 
             // ...
+        });
+
+        //get bool of if user has shared their planner
+        axios.get(get_shared_status_url).then(function (response) {
+            app.vue.shared_status = response.data.status
         });
     };
 

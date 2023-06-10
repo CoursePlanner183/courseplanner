@@ -32,8 +32,11 @@
                 <div class="container">
                     <h2 id="planner_name" class="title">
                         [[=curr_user.first_name]] [[=curr_user.last_name]]'s Planner
-                        <a class="button is-primary ml-4" @click="share_courses()">
-                            <span>Share</span>
+                        <a v-if="shared_status" class="button is-danger ml-4" @click="share_courses()">
+                            <span>Unshare my planner</span>
+                        </a>
+                        <a v-else-if="!shared_status" class="button is-primary ml-4" @click="share_courses()">
+                            <span>Share my planner publicly</span>
                         </a>
                     </h2>
                     <h2 id="no_table">
@@ -177,6 +180,7 @@
         let delete_course_url = "[[=XML(delete_course_url)]]";
         let edit_course_url = "[[=XML(edit_course_url)]]";
         let share_courses_url = "[[=XML(share_courses_url)]]";
+        let get_shared_status_url = "[[=XML(get_shared_status_url)]]";
     </script>
     <script src="js/index.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>

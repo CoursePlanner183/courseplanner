@@ -28,7 +28,8 @@ def index():
         add_course_url=URL('course/add', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('course/edit', signer=url_signer),
-        share_courses_url= URL('share_courses', signer=url_signer),
+        share_courses_url=URL('share_courses', signer=url_signer),
+        get_shared_status_url=URL('get_shared_status', signer=url_signer),
     )
 
 @action('course/create', method=["GET", "POST"])
@@ -87,6 +88,13 @@ def edit_course_taken(course_takenId=None):
     if form.accepted:
         redirect(URL("index"))
     return (dict(form=form))
+
+@action('get_shared_status', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_shared_status():
+    student = db(db.student.user_id == auth.user_id).select().as_list()
+    return dict(status=student[0]['shared_planner'])
+
 
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
@@ -450,9 +458,6 @@ def me():
     x = db(query).select().as_list()[0]
     return { **x["auth_user"], **x["student"] }
 
-
-    
-
 #controller for the share.html page
 @action('share')
 @action.uses('share.html', db, auth.user, url_signer)
@@ -480,11 +485,11 @@ def get_planners():
         name=curr_user[0]['username']
     )
 
-#controller to update if a student wishes to share their planner
+#controller to update if a student wishes to share/unshare their planner
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    db(db.student.user_id == auth.user_id).update(shared_planner=True)
+    db(db.student.user_id == auth.user_id).update(shared_planner=request.json.get('newStatus'))
     return "ok"
 
 #controller to get the list of users that shared their planner
