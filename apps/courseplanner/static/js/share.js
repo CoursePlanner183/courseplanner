@@ -51,7 +51,9 @@ let init = (app) => {
             app.vue.curr_major = student[0]['major'];
             app.vue.curr_school = school[0]['name'];
             app.vue.curr_state = school[0]['state']
-
+            // reset year modes since we're getting a new planner
+            app.vue.year5Mode = false
+            app.vue.year6Mode = false
             //start organizing the list to be displayed on the table
             for (let i = 0; i < app.vue.planners.length; i++) {
                 //get year and name of course
