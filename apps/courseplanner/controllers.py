@@ -42,8 +42,15 @@ def create_course():
         form = py4web form generation for adding a course
     """
     form = Form(db.course, deletable=False, formstyle=FormStyleBulma)
+    form.structure.find('[name=name]')[0]['_placeholder'] = 'e.g. Web Applications'
+    form.structure.find('[name=abbreviation]')[0]['_placeholder'] = 'e.g. CSE'
+    form.structure.find('[name=number]')[0]['_placeholder'] = 'e.g. 183'
+    form.structure.find('[name=description]')[0]['_placeholder'] = 'e.g. This course introduces the design of Web applications.'
+    form.structure.find('[name=credits]')[0]['_placeholder'] = 'e.g. 5'
+    form.structure.find('[name=instructor]')[0]['_placeholder'] = 'e.g. Sammy Slug'
     form.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
     form.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
+    form.structure.find('[name=year]')[0]['_placeholder'] = 'e.g. 2023'
     if form.accepted:
         redirect(URL("index"))
     return dict(form=form)
