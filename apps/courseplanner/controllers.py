@@ -89,13 +89,6 @@ def edit_course_taken(course_takenId=None):
         redirect(URL("index"))
     return (dict(form=form))
 
-@action('get_shared_status', method="GET")
-@action.uses(db, auth.user, url_signer)
-def get_shared_status():
-    student = db(db.student.user_id == auth.user_id).select().as_list()
-    return dict(status=student[0]['shared_planner'])
-
-
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():
@@ -522,6 +515,13 @@ def get_shared_users():
         u['name'] = get_name[0]['username']
         u['school'] = get_school[0]['abbr']
     return dict(users=users)
+
+# get the boolean if student has shared their planner publicly
+@action('get_shared_status', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_shared_status():
+    student = db(db.student.user_id == auth.user_id).select().as_list()
+    return dict(status=student[0]['shared_planner'])
 
 #controller for the help.html page
 @action('help')
