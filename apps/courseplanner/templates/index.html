@@ -32,6 +32,7 @@
                 <div class="container">
                     <h2 id="planner_name" class="title">
                         [[=curr_user.first_name]] [[=curr_user.last_name]]'s Planner
+                        <!--Reactive share button, allows for the user to share/unshare their planner publicly-->
                         <a v-if="shared_status" class="button is-danger ml-4" @click="share_courses()">
                             <span>Unshare my planner</span>
                         </a>

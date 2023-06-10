@@ -1,6 +1,6 @@
 [[extend 'layout.html']]
 
-<title>Shared Planners</title>
+<title>View a Peer's Planner</title>
 
 <style>
     [v-cloak] {
@@ -11,9 +11,6 @@
 
 <div class="section" id="vue-target" v-cloak>
     <!-- Put here your Vue.js template -->
-
-
-
     <div class="columns">
         <div class="column">
             <!--Introduces the user to the page since they have not clicked on a user yet-->
@@ -26,7 +23,7 @@
                     the right and typing your query in the search bar!
                 </h2>
             </div>
-            <!--Display the chosen user's planner, as well as information like major and school-->
+            <!--Intro mode over, display the chosen user's planner, as well as information like major and school-->
             <div v-else>
                 <h1 class="title">
                     {{curr_name}}'s Planner
@@ -119,16 +116,16 @@
                     <div class="field has-addons mb-3">
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                         <div v-else>
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                     </div>
@@ -140,16 +137,16 @@
                     <div class="field has-addons mb-3">
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                         <div v-else>
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                     </div>

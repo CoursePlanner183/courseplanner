@@ -471,6 +471,10 @@ def share():
 @action('get_planners', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_planners():
+    '''
+    get the full list of courses, courses that the student has taken,
+    relevant information about the student and their school.
+    ''' 
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
@@ -496,6 +500,7 @@ def share_courses():
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
+    # get the users that shared their planner, and also add their name and school to the dict.
     users = db((db.student.user_id != auth.user_id) & (db.student.shared_planner == True)).select().as_list()
     for u in users:
         get_name = db(db.auth_user.id == u['user_id']).select().as_list()

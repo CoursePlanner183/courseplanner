@@ -36,6 +36,7 @@ let init = (app) => {
 
     // method to get information on a student and what they have in their planner and organizes it to be displayed on share.html
     app.getPlanners = function(user_id) {
+        // 2D array that simulates a table
         let years = [
             ["", "", "", ""],
             ["", "", "", ""],
@@ -46,6 +47,7 @@ let init = (app) => {
         ]
         let year = "";
         axios.get(get_planners_url, {params:{ user_id }}).then(function (response) {
+            // get all relevant information
             app.vue.planners = app.enumerate(response.data.courses_taken)
             let courses = app.enumerate(response.data.courses);
             let student = app.enumerate(response.data.student);
@@ -54,7 +56,10 @@ let init = (app) => {
             app.vue.curr_major = student[0]['major'];
             app.vue.curr_school = school[0]['name'];
             app.vue.curr_state = school[0]['state']
+
+            //start organizing the list to be displayed on the table
             for (let i = 0; i < app.vue.planners.length; i++) {
+                //get year and name of course
                 year = app.vue.planners[i]['year'];
                 let course = null;
                 for (let j = 0; j < courses.length; j++) {
@@ -63,12 +68,15 @@ let init = (app) => {
                         break;
                     }
                 }
+                //if student has a 5th and/or 6th year course, mark the row to be displayed in html
                 if (year == "Fifth Year" && !app.vue.year5Mode) {
                     app.vue.year5Mode = true
                 }
                 if (year == "Sixth Year" && !app.vue.year6Mode) {
                     app.vue.year6Mode = true
                 }
+                // Nested switch case to organize the planner into year/season to the 2D array
+                // They are strings so that we can just use {{year1[0]}} for First Year/Fall in the respective cell
                 switch (year) {
                     case "First Year":
                         switch (app.vue.planners[i]['season']) {
@@ -168,6 +176,7 @@ let init = (app) => {
                         break;
                 }
             }
+            // html/vue couldn't handle 2D arrays for whatever reason, so needed to split them off into 1D arrays.
             app.vue.year1 = years[0];
             app.vue.year2 = years[1];
             app.vue.year3 = years[2];
@@ -179,8 +188,11 @@ let init = (app) => {
 
     // method to get the list of users or major that starts with the current query
     app.search = function() {
+        // lowercase the query and lowercase the major/name so that searching is easier
+        // find users that start with the query then push it to a new list of user/majors that matches the query
         let search = app.vue.query.toLowerCase()
         app.vue.searched = []
+        // find based on username
         if (app.vue.selected_mode == 0) {
             for (let i = 0; i < app.vue.users.length; i++) {
                 let lowercase = app.vue.users[i].name.toLowerCase();
@@ -189,6 +201,7 @@ let init = (app) => {
                 }
             }
         }
+        // find based on major
         else {
             for (let i = 0; i < app.vue.users.length; i++) {
                 lowercase = app.vue.users[i].major.toLowerCase();
