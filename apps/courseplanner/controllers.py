@@ -269,26 +269,6 @@ def search_course():
             result["is_not_enrolled"] = is_not_enrolled
     return dict(searchForm=searchForm,results=results,DETAIL_FIELDS=DETAIL_FIELDS)
 
-"""@action("course/add", method="POST")
-@action.uses(db, auth.user)
-def add_courses():
-    courses_selected = request.json.get('courses_selected')
-    assert courses_selected is not None
-    for courseId in courses_selected:
-        if len(db(db.course_taken.course_id == courseId).select().as_list()) > 0:
-            return "Course is already taken"
-        data = db(db.course.id == courseId).select().as_list()
-        
-        db.course_taken.insert(
-            course_id=courseId,
-            is_enrolled=True,
-            user_id = auth.user_id,
-            year = data[0]['year'],
-            season = data[0]['offering'],
-        )
-    return "ok
-"""
-
 @action("course/add/<courseId:int>", method="GET")
 @action.uses(db, session,auth.user)
 def add_course(courseId=None):
@@ -345,16 +325,6 @@ def delete_course_taken(course_takenId=None):
         #return "Cannot delete enrollment that you have not created."
     db(db.course_taken.id == course_takenId).delete()
     redirect(URL('course/history'))
-
-"""
-@action("delete_courses", method="POST")
-@action.uses(db, auth.user)
-def delete_courses():
-    courses_delete = request.json.get('courses_delete')
-    for courseId in courses_delete:
-        db((db.course_taken.course_id == courseId)).delete()
-    return "ok"
-"""
 
 #controller for the grades/calculator page
 @action('grades/calculator', method=["GET", "POST"])
