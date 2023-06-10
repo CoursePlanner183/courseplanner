@@ -119,7 +119,21 @@ def course_list():
     rows = db(db.course.created_by == user["id"]).select()
     for row in rows:
         row["offering"] = ", ".join(row["offering"])
-    return dict(rows=rows)
+    return dict(rows=rows,get_user_courses_url=URL('course/user/all', signer=url_signer))
+
+@action('course/user/all', method=["GET"])
+@action.uses(url_signer.verify(),db, auth.user)
+def get_user_courses():
+    """
+    Gets all the courses created by the user and returns them as rows.
+    return data is:
+        rows = query results of all courses created by user
+    """
+    user = auth.get_user()
+    rows = db(db.course.created_by == user["id"]).select()
+    for row in rows:    
+        row["offering"] = ", ".join(row["offering"])
+    return dict(rows=rows,)
 
 @action('course/history', method=["GET", "POST"])
 @action.uses('course_history.html', db, auth.user, url_signer)
@@ -154,7 +168,7 @@ def profile():
             first_name=user["first_name"],
             last_name=user["last_name"],
         )   
-        redirect(URL('user/profile'))
+        redirect(URL('index'))
     return dict()
 
 

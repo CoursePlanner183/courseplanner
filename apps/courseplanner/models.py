@@ -193,6 +193,6 @@ def insert_random_courses(num_courses):
         print("Inserting course",course_data )
         db.course.insert(**course_data)
 
-#add_california_schools()
+add_california_schools()
 
 db.commit()
