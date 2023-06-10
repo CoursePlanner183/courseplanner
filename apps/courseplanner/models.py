@@ -127,6 +127,7 @@ db.define_table(
 db.course_taken.id.readable = db.course_taken.id.writable = False
 
 
+#database table for user's assignment categories, grades, and weight
 db.define_table(
     "course_grade_categories",
     Field("user_id", 'reference auth_user', default=lambda: auth.user_id),
@@ -193,6 +194,6 @@ def insert_random_courses(num_courses):
         print("Inserting course",course_data )
         db.course.insert(**course_data)
 
-#add_california_schools()
+add_california_schools()
 
 db.commit()

@@ -129,6 +129,7 @@ def course_history():
     return dict(rows=rows)
 
 
+#controller for user to be able to access their profile and update their profile
 @action('user/profile',method=["GET", "POST"])
 @action.uses('user.html', db, auth.user, url_signer, session)
 def profile():
@@ -146,7 +147,7 @@ def profile():
             first_name=user["first_name"],
             last_name=user["last_name"],
         )   
-        redirect(URL('user/profile'))
+        redirect(URL('index'))
     return dict()
 
 
@@ -383,13 +384,14 @@ def delete_courses():
         db((db.course_taken.course_id == courseId)).delete()
     return "ok"
 
-
+#controller for the grades/calculator page
 @action('grades/calculator', method=["GET", "POST"])
 @action.uses('calculator.html', db, auth.user, url_signer)
 def calc():
     return dict()
 
 
+#controller to get the user's courses
 @action('get_my_courses')
 @action.uses(db, auth.user, url_signer)
 def get_my_courses():
@@ -400,6 +402,7 @@ def get_my_courses():
     return dict(courses_taken=courses_taken)
 
 
+#controller to get user's assignments
 @action('grade_categories')
 @action.uses(db, auth.user, url_signer)
 def get_grade_categories():
@@ -412,6 +415,7 @@ def get_grade_categories():
     return dict(grade_categories=grade_categories, grade=grade)
 
 
+# controller to save user's assignments, weight and percentage
 @action('grade_categories', method='POST')
 @action.uses(db, auth.user, url_signer)
 def post_grade_categories():
@@ -427,6 +431,7 @@ def post_grade_categories():
     return "ok"
 
 
+#controller to update final grade 
 @action('submit_grade', method="POST")
 @action.uses(db, auth.user, url_signer)
 def submit_grade():
@@ -437,12 +442,14 @@ def submit_grade():
     return dict(course_id=course_id, grade=grade)
 
 
+#controller to get universities for the profile page
 @action('universities')
 @action.uses(db, auth.user, url_signer)
 def universities():
     schools = db(db.school).select().as_list()
     return dict(schools=schools)
 
+#controller to get information of the user on the auth table and student table for the profile page
 @action('me')
 @action.uses(db, auth.user, url_signer)
 def me():

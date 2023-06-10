@@ -4,7 +4,9 @@
 <div id="vue-target">
   <section class="section">
     <form accept-charset="utf8" action="//127.0.0.1:8000/courseplanner/user/profile" enctype="multipart/form-data" method="POST">
+      <!-- Hidden input field to store the student's ID -->
       <input hidden type="hidden" name="id" v-model="student.id">
+      <!-- Username field -->
       <div class="field">
         <label class="label">Username</label>
         <div class="control">
@@ -12,59 +14,76 @@
         </div>
         <p class="help"></p>
       </div>
+      <!-- Email field -->
       <div class="field">
           <label class="label">Email</label>
           <div class="control">
+            <!-- Input field to edit the student's email -->
               <input class="input" id="auth_user_email" name="email" type="text" v-model="student.email">
           </div>
           <p class="help"></p>
       </div>
+      <!-- First Name field -->
       <div class="field">
           <label class="label">First Name</label>
           <div class="control">
+            <!-- Input field to edit the student's first name -->
               <input class="input" id="auth_user_first_name" name="first_name" type="text" v-model="student.first_name">
           </div>
           <p class="help"></p>
       </div>
+      <!-- Last Name field -->
       <div class="field">
           <label class="label">Last Name</label>
           <div class="control">
+            <!-- Input field to edit the student's last name -->
               <input class="input" id="auth_user_last_name" name="last_name" type="text" v-model="student.last_name">
           </div>
           <p class="help"></p>
       </div>
+      <!-- Major field -->
       <div class="field">
           <label class="label">Major</label>
           <div class="control">
+            <!-- Input field to edit the student's major -->
               <input class="input" name="major" type="text" v-model="student.major">
           </div>
           <p class="help"></p>
       </div>
+      <!-- Grad Start Date field -->
       <div class="field">
           <label class="label">Grad Start Date</label>
           <div class="control">
+            <!-- Input field to edit the student's graduation start date -->
               <input class="input" name="grad_start_date" type="date" v-model="student.grad_start_date">
           </div>
           <p class="help"></p>
       </div>
+      <!-- Grad End Date field -->
       <div class="field">
           <label class="label">Grad End Date</label>
           <div class="control">
+            <!-- Input field to edit the student's graduation end date -->
               <input class="input" name="grad_end_date" type="date" v-model="student.grad_end_date">
           </div>
           <p class="help"></p>
       </div>
+      <!-- University field -->
       <div class="field">
           <label class="label">University</label>
           <div class="select">
+            <!-- Dropdown menu to select the student's university -->
             <select class="control select" name="school_id">
+              <!-- Iterate over schools and generate options dynamically -->
               <option v-for="school in schools" :selected="school.id === student.school_id" :value="school.id">{{ school.name }}</option>
             </select>
           </div>
           <p class="help"></p>
       </div>
+      <!-- Submit button -->
       <div class="field">
           <div class="control">
+            <!-- Button to submit the form -->
               <input class="button is-primary" type="submit" value="Submit">
           </div>
       </div>

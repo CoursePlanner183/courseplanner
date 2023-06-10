@@ -19,11 +19,12 @@
 </style>
 
 <div id="vue-target">
-
+    <!-- Grade Calculator Section -->
     <div class="columns mx-2">
         <div class="column mt-6 is-half">
             <h1 class="title">Grade Calculator</h1>
             <div class="select mb-4">
+                <!-- Dropdown to select a course -->
                 <select class="input" @change="selectCourse($event)">
                 <option value="">Choose a Course</option>
                 <option v-for="course in courses" :value="course.id">{{course.name}}</option>
@@ -32,6 +33,7 @@
             <p>Grade Calculator: Calculates course grade using percentages</p>
             <div class="field">
                 <div class="table-container">
+                    <!-- Grade table -->
                     <table id="grade-table" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr>
@@ -42,10 +44,14 @@
                         </thead>
                         <tbody>
                             <tr v-for="category in grade_categories">
+                                <!-- Assignment category name input field -->
                                 <td><input type="text" :placeholder="category.placeholder" class="input" v-model="category.category_name" autofocus></td>
+                                <!-- Grade input field (hidden on touch devices) -->
                                 <td class="is-hidden-touch"><input type="number" min="0" step="any" class="input" v-model="category.grade"></td>
+                                <!-- Weight input field -->
                                 <td><input type="number" min="0" step="any" class="input" v-model="category.weight"></td>
                                 <td>
+                                    <!-- Button to delete a row -->
                                     <button class="button is-danger" @click="deleteRow(category)">X</button>
                                 </td>
                             </tr>
@@ -54,10 +60,12 @@
                 </div>
             </div>
 
+            <!-- Button to add a new row -->
             <div class="field mt-5">
                 <button id="add-row-button" class="button is-link is-fullwidth" @click="addRow">Add Row</button>
             </div>
 
+            <!-- Button to save the grade categories -->
             <div class="field">
                 <div class="buttons">
                     <button type="button" title="Calculate" class="button is-success" @click="saveGradeCategories">Save</button>
@@ -68,6 +76,7 @@
                 <label class="label">Average Grade</label>
                 <div class="field has-addons">
                     <div class="control">
+                        <!-- Input field to display the average grade -->
                         <input type="text" placeholder="Percentage" min="0" step="any" class="input" v-model="average_grade" readonly>
                     </div>
                     <div class="control">
@@ -75,6 +84,7 @@
                     </div>
                     <div class="control pl-4">
                         <div class="select">
+                            <!-- Dropdown to select the final grade -->
                             <select class="input" v-model="grade">
                             <option>A+</option>
                             <option>A</option>
@@ -94,7 +104,8 @@
                     </div>
                 </div>
             </div>
-
+            
+            <!-- Button to submit the grade -->
             <div class="field">
                 <div class="buttons">
                     <button type="button" title="Calculate" class="button is-info" @click="submitGrade">Submit Grade</button>
@@ -102,7 +113,7 @@
             </div>
         </div>
 
-
+        <!-- GPA Calculator Section -->
         <div class="column is-right">
             <h1 class="title mt-6">GPA Calculator</h1>
             <p>GPA Calculator: Calculates GPA from letter grades and credit points</p>
@@ -117,6 +128,7 @@
                     </tbody>
                     <tbody>
                         <tr v-for="course in courses">
+                            <!-- Input fields to display course details -->
                             <td><input type="text" class="input" placeholder="Course #1" readonly v-model="course.name"></td>
                             <td><input type="text" min="0" step="any" class="input" readonly v-model="course.final_grade"></td>
                             <td><input type="text" min="0" step="any" class="input" readonly v-model="course.credits"></td>
@@ -126,6 +138,7 @@
 
                 <div class="field">
                     <label class="label">GPA</label>
+                    <!-- Input field to display the calculated GPA -->
                     <input type="text" readonly class="input is-large" v-model="gpa">
                 </div>
 
@@ -135,6 +148,7 @@
 
                 <div class="field">
                     <label class="label">Total Credits/Hours</label>
+                    <!-- Input field to display the total credits/hours -->
                     <input type="text" class="input" readonly v-model="total_credits">
                 </div>
             </form>
