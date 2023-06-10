@@ -1,9 +1,6 @@
 let app = {};
 
-// Given an empty app object, initializes it filling its attributes,
-// creates a Vue instance, and then initializes the Vue instance.
 let init = (app) => {
-    // This is the Vue data.
     app.data = {
         grade_categories: [{ assignment: undefined, grade: undefined, weight: undefined, placeholder:"e.g Assignment" }, 
             { assignment: undefined, grade: undefined, weight: undefined, placeholder: "e.g Projects" }, 
@@ -144,7 +141,7 @@ let init = (app) => {
         }
     }
 
-    // This contains all the methods.
+
     app.methods = {
         addRow: app.addRow,
         deleteRow: app.deleteRow,
@@ -153,39 +150,46 @@ let init = (app) => {
         saveGradeCategories: app.saveGradeCategories,
     };
 
-    // This creates the Vue instance.
+
     app.vue = new Vue({
         el: "#vue-target",
         data: app.data,
         methods: app.methods,
         watch: {
+            // Watch for changes in the 'courses' data property
             courses: {
+                // Handler function to be executed when 'courses' changes
                 handler: (newValue) => {
+                    // Update the total credits and GPA based on the new 'courses' value
                     app.data.total_credits = totalCredits(newValue);
                     app.data.gpa = calculateGpa(newValue);
                 },
+                // Enable deep watching to detect changes in nested properties of 'courses'
                 deep: true
             },
 
+            // Watch for changes in the 'grade_categories' data property
             grade_categories: {
+                // Handler function to be executed when 'grade_categories' changes
                 handler: (newValue) => {
+                    // Update the average grade based on the new 'grade_categories' value
                     app.data.average_grade = calculateAvgGrade(newValue);
                 },
+                // Enable deep watching to detect changes in nested properties of 'grade_categories'
                 deep: true
             }
         }
     });
 
-    // This initializes it.
+
     app.init = () => {
-        // Put here any initialization code.
+
         app.getCourses();
     };
 
-    // Call the initializer.
+
     app.init();
 };
 
-// This takes the (empty) app object and initializes it,
-// putting all the code in it.
+
 init(app);
