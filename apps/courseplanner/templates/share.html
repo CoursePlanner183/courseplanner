@@ -112,6 +112,7 @@
             <div v-if="query.length>0">
                 <div v-for="u in searched">
                     <div class="field has-addons mb-3">
+                        <!--Highlight selected user-->
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
                               <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
@@ -119,6 +120,7 @@
                               </button>
                             </p>
                         </div>
+                        <!--Unhighlighted user-->
                         <div v-else>
                             <p class="control">
                               <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
@@ -133,6 +135,7 @@
             <div v-else>
                 <div v-for="u in users">
                     <div class="field has-addons mb-3">
+                        <!--Highlight selected user-->
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
                               <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
@@ -140,6 +143,7 @@
                               </button>
                             </p>
                         </div>
+                        <!--Unhighlighted user-->
                         <div v-else>
                             <p class="control">
                               <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
