@@ -170,60 +170,7 @@ def profile():
         )   
         redirect(URL('index'))
     return dict()
-
-
-@action('edit_course', method=["GET", "POST"])
-@action.uses('edit_course.html', db, session, auth.user, url_signer)
-def edit_course():
-    if request.method == 'GET':
-        course_id = request.params.get('course_id')
-        course = db.course(course_id)
-        if course is None:
-            redirect(URL('index'))
-        form = Form(
-            [
-                Field("name", default=course.name, type='string'),
-                Field("number", default=course.number, type="integer"),
-                Field("credits", default=course.credits, type="integer"),
-                Field("offering", default=course.offering, type='string', requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-                Field("year", default=course.year, type="integer"),
-            ],
-            csrf_session=session,
-            formstyle=FormStyleBulma,
-        )
-
-        return dict(form=form, course_id=course_id)
-
-    # get POST request
-    course_id = request.forms.get('course_id')
-    course = db.course(course_id)
-    if course is None:
-        redirect(URL('index'))
-
-    form = Form(
-        [
-            Field("name", default=request.forms.get('name'), type='string'),
-            Field("number", default=request.forms.get('number'), type="integer"),
-            Field("credits", default=request.forms.get('credits'), type="integer"),
-            Field("offering", default=request.forms.get('offering'), type='string', requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-            Field("year", default=request.forms.get('year'), type="integer"),
-        ],
-        csrf_session=session,
-        formstyle=FormStyleBulma,
-    )
-
-    if form.accepted:
-        course.update_record(
-            name=form.vars['name'],
-            number=form.vars['number'],
-            credits=form.vars['credits'],
-            offering=form.vars['offering'],
-            year=form.vars['year']
-        )
-        redirect(URL('index'))
-
-    return dict(form=form, course_id=course_id)
-
+    
 @action("course/search", method=["GET","POST"])
 @action.uses('search_course.html',db,session, auth.user)
 def search_course():
