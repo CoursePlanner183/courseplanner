@@ -98,6 +98,7 @@ def edit_course_taken(course_takenId=None):
 @action('get_courses')
 @action.uses(db, auth.user, url_signer)
 def get_courses():
+    """Gets all the courses for  the user and returns them as rows. also returns user id for planner building"""
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == auth.user_id).select().as_list()
     return dict(
