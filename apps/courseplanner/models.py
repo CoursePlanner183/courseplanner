@@ -121,7 +121,6 @@ db.define_table(
     Field("year",type='string',requires=IS_IN_SET(['First Year','Second Year','Third Year','Fourth Year', 'Fifth Year', 'Sixth Year'])),
     Field("grade", "integer",default=100,writable=True,readable=False),
     Field("final_grade", type="string"),
-    Field("is_shared", type="boolean", default=False),
 )
 
 db.course_taken.id.readable = db.course_taken.id.writable = False
