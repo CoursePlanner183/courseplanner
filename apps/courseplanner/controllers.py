@@ -26,7 +26,6 @@ def index():
         courses=courses,
         curr_user=curr_user,
         add_course_url=URL('course/add', signer=url_signer),
-        delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('course/edit', signer=url_signer),
         share_courses_url=URL('share_courses', signer=url_signer),
         get_shared_status_url=URL('get_shared_status', signer=url_signer),
@@ -269,7 +268,7 @@ def search_course():
             result["is_not_enrolled"] = is_not_enrolled
     return dict(searchForm=searchForm,results=results,DETAIL_FIELDS=DETAIL_FIELDS)
 
-@action("course/add", method="POST")
+"""@action("course/add", method="POST")
 @action.uses(db, auth.user)
 def add_courses():
     courses_selected = request.json.get('courses_selected')
@@ -286,7 +285,8 @@ def add_courses():
             year = data[0]['year'],
             season = data[0]['offering'],
         )
-    return "ok"
+    return "ok
+"""
 
 @action("course/add/<courseId:int>", method="GET")
 @action.uses(db, session,auth.user)
@@ -344,7 +344,8 @@ def delete_course_taken(course_takenId=None):
         #return "Cannot delete enrollment that you have not created."
     db(db.course_taken.id == course_takenId).delete()
     redirect(URL('course/history'))
-    
+
+"""
 @action("delete_courses", method="POST")
 @action.uses(db, auth.user)
 def delete_courses():
@@ -352,6 +353,7 @@ def delete_courses():
     for courseId in courses_delete:
         db((db.course_taken.course_id == courseId)).delete()
     return "ok"
+"""
 
 #controller for the grades/calculator page
 @action('grades/calculator', method=["GET", "POST"])
