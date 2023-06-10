@@ -9,9 +9,9 @@
         <div class="box" style="max-width: none;">
           <h1 class="title">Course Search</h1>
           <div id="app">
-
             [[=searchForm.custom.begin ]]
             [[for field in DETAIL_FIELDS: ]]
+            <!-- Check if course is course number -->
             [[ if field == 'course_number': ]]
             <div class="field">
               <label class="label">[[=searchForm.custom.labels[field] ]]</label>
@@ -24,6 +24,7 @@
                 </div>
               </div>
             </div>
+            <!-- need custom div wrapper for selects -->
             [[ elif field == 'offering': ]]
             <div class="field">
               <label class="label">[[=searchForm.custom.labels[field] ]]</label>
@@ -31,7 +32,7 @@
                 [[=searchForm.custom.widgets[field] ]]
               </div>
             </div>
-            [[ else: ]]
+            [[ else: ]] <!-- Add field to form -->
             <div class="field">
               <label class="label">[[=searchForm.custom.labels[field] ]]</label>
               <div class="control">
@@ -52,6 +53,8 @@
 
     <!--Start of search results -->
     <div class="content is-centered">
+      <!-- Page breaks when I remove the line break in this code below. -->
+      <!-- Displays count of results -->
       <h2 class="title is-4 edit-results">[[=len(results)
         pass]] Result(s):</h2>
       <ul>
@@ -59,6 +62,7 @@
         <li class="result-card" ref="[[=row.id]]-card">
           <div class="result-header">
             <strong>[[=row.abbreviation]] [[=row.number]] - [[=row.name]]</strong>
+            <!-- Icons for courses -->
             <span class="result-icons">
               [[if row.is_not_enrolled and row.offering is not None:]]
               <a class="button" @click="openAddCourseBox([[=row.id]],[[=row.offering]]) " ref="[[=row.id]]-add">
@@ -92,6 +96,8 @@
             </p>
             <p><strong>Offering(s):</strong> [[=', '.join(row.offering)]]</p>
             <p><strong>Year:</strong> [[=row.year]]</p>
+            
+            <!--Start of the pop up window that appears when adding a course-->
             <div class="course-box" v-if="selectedCourseId == [[=row.id]]">
               <div class="modal">
                 <div class="modal-content">
@@ -145,6 +151,7 @@
               </div>
             </div>
           </div>
+          <!--End of the pop up window that appears when adding a course-->
 
 
         </li>
