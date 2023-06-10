@@ -88,12 +88,12 @@ def edit_course_taken(course_takenId=None):
     assert course_takenId is not None
     course_taken = db.course_taken[course_takenId]
     if(course_taken.user_id != auth.user_id):
-        redirect(URL('index'))
+        redirect(URL("course/history"))
     if course_taken is None:
-        redirect(URL('index'))
+        redirect(URL("course/history"))
     form = Form(db.course_taken,record=course_taken,deletable=False,formstyle=FormStyleBulma,csrf_session=session)
     if form.accepted:
-        redirect(URL("index"))
+        redirect(URL("course/history"))
     return (dict(form=form))
 
 @action('get_courses')
