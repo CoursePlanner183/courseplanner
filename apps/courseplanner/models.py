@@ -86,14 +86,14 @@ db.define_table(
 #Database table to represent the course data that a user can create
 db.define_table(
     "course",
-    Field("name", type='string'),
-    Field("abbreviation", type='string'),
-    Field("number", type="integer"),
-    Field("description", type="text"),
-    Field("credits", type="integer"),
-    Field("instructor", type="string"),
-    Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True),
-    Field("year","integer"),
+    Field("name", type='string',required=True,requires=IS_NOT_EMPTY()),
+    Field("abbreviation", type='string',required=True,requires=IS_NOT_EMPTY()),
+    Field("number", type="integer",required=True,requires=IS_NOT_EMPTY()),
+    Field("description", type="text",required=True,requires=IS_NOT_EMPTY()),
+    Field("credits", type="integer",required=True,requires=IS_NOT_EMPTY()),
+    Field("instructor", type="string",required=True,requires=IS_NOT_EMPTY()),
+    Field("offering",type='list:string',requires=IS_IN_SET(['Fall','Winter','Spring','Summer'], multiple=True),multiple=True,required=True),
+    Field("year","integer",required=True,requires=IS_NOT_EMPTY()),
     Field('created_by', 'reference auth_user', default=lambda: auth.user_id)
 )
 

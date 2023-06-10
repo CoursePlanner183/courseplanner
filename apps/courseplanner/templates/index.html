@@ -24,22 +24,24 @@
 
 
 <div class="section" id="vue-target" v-cloak>
-
     <div class="columns">
-
         <div class="column" hidden>
             <section class="section">
                 <div class="container">
                     <h2 id="planner_name" class="title">
                         [[=curr_user.first_name]] [[=curr_user.last_name]]'s Planner
-                        <a class="button is-primary ml-4" @click="share_courses()">
-                            <span>Share</span>
+                        <!--Reactive share button, allows for the user to share/unshare their planner publicly-->
+                        <a v-if="shared_status" class="button is-danger ml-4" @click="share_courses()">
+                            <span>Unshare My Planner</span>
+                        </a>
+                        <a v-else-if="!shared_status" class="button is-primary ml-4" @click="share_courses()">
+                            <span>Share My Planner Publicly</span>
                         </a>
                     </h2>
                     <h2 id="no_table">
-                        Your planner is empty. Add a course to your planner by going to the course search page.
+                        Your planner is empty. <a href="[[=URL('course/create')]]">Create a course</a> or <a href="[[=URL('course/search')]]">search for a course</a> to add to your planner.
                     </h2>
-                    <!-- Current courses list goes here -->
+                    <!-- Planner -->
                     <div id="table">
                         <table class="table is-striped is-fullwidth">
                             <thead>
@@ -52,6 +54,7 @@
                             <tbody id="planner_body">
                             </tbody>
                         </table>
+                        <!-- Buttons to add or delete a year on the planner -->
                         <a id="add_year_btn" class="button is-primary" @click="add_year()">
                             <span>Add Year</span>
                         </a>
@@ -63,6 +66,7 @@
             </section>
         </div>
 
+        <!-- Used as a template when adding a new year to the planner. Template tag was not working -->
         <div style="display:none">
             <table id="year_template">
                 <tr>
@@ -75,101 +79,9 @@
             </table>
         </div>
 
-
-        <div class="column is-one-third has-background-light hide">
-            <section class="section" hidden>
-                <div class="container">
-                    <h2 class="subtitle">Courses</h2>
-                    <div class="field has-addons">
-                        <div class="control is-expanded">
-                            <input class="input" type="text" placeholder="Search for previous courses">
-                        </div>
-                        <div class="control">
-                            <button class="button is-primary">Search</button>
-                        </div>
-                    </div>
-
-                    <table class="table is-striped is-fullwidth">
-                        <tbody>
-                            <tr v-for="course in courses" :key="course.id">
-                                <td>
-                                    <div class="field has-addons">
-                                        <div class="level-right">
-                                            <label class="checkbox mr-6">
-                                                <input type="checkbox" v-model="selectedCourses" :id="course.name"
-                                                    :value="course.id">
-                                                {{course.name}}
-                                            </label>
-                                            <!-- Update the Edit button anchor tag -->
-                                            <form method="POST" action="[[=URL('edit_course')]]">
-                                                <input type="hidden" name="course_id" :value="course.id">
-                                                <input type="hidden" name="name" :value="course.name">
-                                                <input type="hidden" name="number" :value="course.number">
-                                                <input type="hidden" name="credits" :value="course.credits">
-                                                <input type="hidden" name="offering" :value="course.offering">
-                                                <input type="hidden" name="year" :value="course.year">
-                                                <button type="submit" class="button is-light">
-                                                    <span class="icon"><i class="fa fa-fw fa-pencil"></i></span>
-                                                    <span>Edit</span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <a class="button is-success clickable" @click="addcourses()">
-                        <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
-                        <span>Add Course</span>
-                    </a>
-                    <a class="button is-info" href='[[=URL("course/create")]]'>
-                        <span class="icon">
-              <i class="fa fa-plus"></i>
-            </span>
-                        <span>Create Course</span>
-                    </a>
-
-                    <a class="button is-warning" @click="deleteMode=!deleteMode">
-                        <span class="icon">
-              <i class="fa fa-exclamation-triangle"></i>
-            </span>
-                        <span>Delete Courses</span>
-                    </a>
-                    <div v-if="deleteMode">
-                        <div class="field has-addons" v-for="course in courses">
-                            <div class="field has-addons" v-for="ct in courses_taken">
-                                <div v-if="ct.course_id==course.id">
-                                    <div class="level-right">
-                                        <label class="checkbox">
-                      <input type="checkbox"  v-model="selectedDelete" :id="course.name" :value="course.id">
-                        {{course.name}}
-                    </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <a class="button is-danger" @click="deleteMode=!deleteMode; deleteCourses()">
-                            <span class="icon">
-                <i class="fa fa-times-circle"></i>
-              </span>
-                            <span>Delete Selected Courses</span>
-                        </a>
-                    </div>
-
-
-            </section>
-
-            </div>
-
-
-
-
-        </div>
     </div>
+</div>
+
     [[block page_scripts]]
     <!-- Loads the index-specific js for Vue -->
     <script>
@@ -177,6 +89,7 @@
         let delete_course_url = "[[=XML(delete_course_url)]]";
         let edit_course_url = "[[=XML(edit_course_url)]]";
         let share_courses_url = "[[=XML(share_courses_url)]]";
+        let get_shared_status_url = "[[=XML(get_shared_status_url)]]";
     </script>
     <script src="js/index.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/vue2-timeago@1.2.3/dist/vue2-timeago.js'></script>

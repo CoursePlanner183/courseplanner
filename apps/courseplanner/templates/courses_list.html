@@ -1,3 +1,11 @@
+<!--
+courses_list.html
+
+Template for All Courses page. Courses created from the Create Course page are displayed under My Courses. Public
+Courses display a list of CSE courses offered for the upcoming school year (see Improvements section on README.pdf
+for more information).
+-->
+
 [[extend "layout.html"]]
 
 <title>All Courses</title>
@@ -17,27 +25,32 @@
         <h2 class="title is-4">My Courses</h2>
         <!-- table header -->
         <thead>
-            <th><abbr title="Abbreviation">Abbr</abbr></th>
-            <th>Number</th>
+            <th><abbr title="Abbreviation" class="clickable " style="text-decoration:underline;" @click="sortByAbbr()">Abbr
+                    <i :class="getSortIconClass(abbrFilterOption)"></i></abbr></th>
+            <th class="clickable" style="text-decoration:underline;" @click="sortByNumber()">Number
+                <i :class="getSortIconClass(numberFilterOption)"></i>
+            </th>
             <th>Description</th>
-            <th>Credits</th>
-            <th>Offering</th>
-            <th class="clickable has-text-link" style="text-decoration:underline;">Year Offered</th>
+            <th class="clickable" style="text-decoration:underline;" @click="sortByCredits()">Credits
+                <i :class="getSortIconClass(creditsFilterOption)"></i>
+            </th>
+            <th class="clickable" style="text-decoration:underline;" @click="sortByOffering()">Offering
+                <i :class="getSortIconClass(offeringFilterOption)"></i>
+            </th>
+            <th class="clickable" style="text-decoration:underline;" @click="sortByYear()">Year Offered
+                <i :class="getSortIconClass(yearFilterOption)"></i>
+            </th>
         </thead>
         <!-- Created Courses -->
         <tbody>
-            [[for row in rows:]]
-            <tr>
-                <td>[[=row.abbreviation]]</td>
-                <td>[[=row.number]]</td>
-                <td>[[=row.description]]</td>
-                <td>[[=row.credits]]</td>
-                <td>[[=row.offering]]</td>
-                <td>[[=row.year]]</td>
-
+            <tr v-for="row in rows">
+                <td>{{row.abbreviation}}</td>
+                <td>{{row.number}}</td>
+                <td>{{row.description}}</td>
+                <td>{{row.credits}}</td>
+                <td>{{row.offering}}</td>
+                <td>{{row.year}}</td>
             </tr>
-            [[pass]]
-
         </tbody>
     </table>
 
@@ -217,3 +230,11 @@
 
 
 </div>
+
+
+[[block page_scripts]]
+<script>
+    let get_user_courses_url = "[[=XML(get_user_courses_url)]]";
+</script>
+<script src="js/course_list.js"></script>
+[[end]]

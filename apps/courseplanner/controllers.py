@@ -28,7 +28,8 @@ def index():
         add_course_url=URL('course/add', signer=url_signer),
         delete_course_url=URL('delete_courses', signer=url_signer),
         edit_course_url=URL('course/edit', signer=url_signer),
-        share_courses_url= URL('share_courses', signer=url_signer),
+        share_courses_url=URL('share_courses', signer=url_signer),
+        get_shared_status_url=URL('get_shared_status', signer=url_signer),
     )
 
 @action('course/create', method=["GET", "POST"])
@@ -41,8 +42,15 @@ def create_course():
         form = py4web form generation for adding a course
     """
     form = Form(db.course, deletable=False, formstyle=FormStyleBulma)
+    form.structure.find('[name=name]')[0]['_placeholder'] = 'e.g. Web Applications'
+    form.structure.find('[name=abbreviation]')[0]['_placeholder'] = 'e.g. CSE'
+    form.structure.find('[name=number]')[0]['_placeholder'] = 'e.g. 183'
+    form.structure.find('[name=description]')[0]['_placeholder'] = 'e.g. This course introduces the design of Web applications.'
+    form.structure.find('[name=credits]')[0]['_placeholder'] = 'e.g. 5'
+    form.structure.find('[name=instructor]')[0]['_placeholder'] = 'e.g. Sammy Slug'
     form.structure.find('[name=offering]')[0]['_class'] = 'custom-select'
     form.structure.find('[class=select]')[0]["_class"] = "select is-multiple"
+    form.structure.find('[name=year]')[0]['_placeholder'] = 'e.g. 2023'
     if form.accepted:
         redirect(URL("index"))
     return dict(form=form)
@@ -80,12 +88,12 @@ def edit_course_taken(course_takenId=None):
     assert course_takenId is not None
     course_taken = db.course_taken[course_takenId]
     if(course_taken.user_id != auth.user_id):
-        redirect(URL('index'))
+        redirect(URL("course/history"))
     if course_taken is None:
-        redirect(URL('index'))
+        redirect(URL("course/history"))
     form = Form(db.course_taken,record=course_taken,deletable=False,formstyle=FormStyleBulma,csrf_session=session)
     if form.accepted:
-        redirect(URL("index"))
+        redirect(URL("course/history"))
     return (dict(form=form))
 
 @action('get_courses')
@@ -111,7 +119,21 @@ def course_list():
     rows = db(db.course.created_by == user["id"]).select()
     for row in rows:
         row["offering"] = ", ".join(row["offering"])
-    return dict(rows=rows)
+    return dict(rows=rows,get_user_courses_url=URL('course/user/all', signer=url_signer))
+
+@action('course/user/all', method=["GET"])
+@action.uses(url_signer.verify(),db, auth.user)
+def get_user_courses():
+    """
+    Gets all the courses created by the user and returns them as rows.
+    return data is:
+        rows = query results of all courses created by user
+    """
+    user = auth.get_user()
+    rows = db(db.course.created_by == user["id"]).select()
+    for row in rows:    
+        row["offering"] = ", ".join(row["offering"])
+    return dict(rows=rows,)
 
 @action('course/history', method=["GET", "POST"])
 @action.uses('course_history.html', db, auth.user, url_signer)
@@ -149,60 +171,7 @@ def profile():
         )   
         redirect(URL('index'))
     return dict()
-
-
-@action('edit_course', method=["GET", "POST"])
-@action.uses('edit_course.html', db, session, auth.user, url_signer)
-def edit_course():
-    if request.method == 'GET':
-        course_id = request.params.get('course_id')
-        course = db.course(course_id)
-        if course is None:
-            redirect(URL('index'))
-        form = Form(
-            [
-                Field("name", default=course.name, type='string'),
-                Field("number", default=course.number, type="integer"),
-                Field("credits", default=course.credits, type="integer"),
-                Field("offering", default=course.offering, type='string', requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-                Field("year", default=course.year, type="integer"),
-            ],
-            csrf_session=session,
-            formstyle=FormStyleBulma,
-        )
-
-        return dict(form=form, course_id=course_id)
-
-    # get POST request
-    course_id = request.forms.get('course_id')
-    course = db.course(course_id)
-    if course is None:
-        redirect(URL('index'))
-
-    form = Form(
-        [
-            Field("name", default=request.forms.get('name'), type='string'),
-            Field("number", default=request.forms.get('number'), type="integer"),
-            Field("credits", default=request.forms.get('credits'), type="integer"),
-            Field("offering", default=request.forms.get('offering'), type='string', requires=IS_IN_SET(['Fall', 'Winter', 'Spring', 'Summer'])),
-            Field("year", default=request.forms.get('year'), type="integer"),
-        ],
-        csrf_session=session,
-        formstyle=FormStyleBulma,
-    )
-
-    if form.accepted:
-        course.update_record(
-            name=form.vars['name'],
-            number=form.vars['number'],
-            credits=form.vars['credits'],
-            offering=form.vars['offering'],
-            year=form.vars['year']
-        )
-        redirect(URL('index'))
-
-    return dict(form=form, course_id=course_id)
-
+    
 @action("course/search", method=["GET","POST"])
 @action.uses('search_course.html',db,session, auth.user)
 def search_course():
@@ -457,9 +426,6 @@ def me():
     x = db(query).select().as_list()[0]
     return { **x["auth_user"], **x["student"] }
 
-
-    
-
 #controller for the share.html page
 @action('share')
 @action.uses('share.html', db, auth.user, url_signer)
@@ -473,6 +439,10 @@ def share():
 @action('get_planners', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_planners():
+    '''
+    get the full list of courses, courses that the student has taken,
+    relevant information about the student and their school.
+    ''' 
     user_id = request.params.get('user_id')
     courses = db(db.course).select().as_list()
     courses_taken = db(db.course_taken.user_id == user_id).select(orderby=db.course_taken.year).as_list()
@@ -487,17 +457,18 @@ def get_planners():
         name=curr_user[0]['username']
     )
 
-#controller to update if a student wishes to share their planner
+#controller to update if a student wishes to share/unshare their planner
 @action('share_courses', method="POST")
 @action.uses(db, auth.user, url_signer)
 def share_courses():
-    db(db.student.user_id == auth.user_id).update(shared_planner=True)
+    db(db.student.user_id == auth.user_id).update(shared_planner=request.json.get('newStatus'))
     return "ok"
 
 #controller to get the list of users that shared their planner
 @action('get_shared_users', method="GET")
 @action.uses(db, auth.user, url_signer)
 def get_shared_users():
+    # get the users that shared their planner, and also add their name and school to the dict.
     users = db((db.student.user_id != auth.user_id) & (db.student.shared_planner == True)).select().as_list()
     for u in users:
         get_name = db(db.auth_user.id == u['user_id']).select().as_list()
@@ -505,6 +476,13 @@ def get_shared_users():
         u['name'] = get_name[0]['username']
         u['school'] = get_school[0]['abbr']
     return dict(users=users)
+
+# get the boolean if student has shared their planner publicly
+@action('get_shared_status', method="GET")
+@action.uses(db, auth.user, url_signer)
+def get_shared_status():
+    student = db(db.student.user_id == auth.user_id).select().as_list()
+    return dict(status=student[0]['shared_planner'])
 
 #controller for the help.html page
 @action('help')

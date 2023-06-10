@@ -1,6 +1,6 @@
 [[extend 'layout.html']]
 
-<title>Shared Planners</title>
+<title>View a Peer's Planner</title>
 
 <style>
     [v-cloak] {
@@ -8,12 +8,7 @@
     }
 </style>
 
-
 <div class="section" id="vue-target" v-cloak>
-    <!-- Put here your Vue.js template -->
-
-
-
     <div class="columns">
         <div class="column">
             <!--Introduces the user to the page since they have not clicked on a user yet-->
@@ -26,7 +21,7 @@
                     the right and typing your query in the search bar!
                 </h2>
             </div>
-            <!--Display the chosen user's planner, as well as information like major and school-->
+            <!--Intro mode over, display the chosen user's planner, as well as information like major and school-->
             <div v-else>
                 <h1 class="title">
                     {{curr_name}}'s Planner
@@ -117,18 +112,20 @@
             <div v-if="query.length>0">
                 <div v-for="u in searched">
                     <div class="field has-addons mb-3">
+                        <!--Highlight selected user-->
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
+                        <!--Unhighlighted user-->
                         <div v-else>
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                     </div>
@@ -138,18 +135,20 @@
             <div v-else>
                 <div v-for="u in users">
                     <div class="field has-addons mb-3">
+                        <!--Highlight selected user-->
                         <div v-if="u.user_id == selected_id">
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button is-success">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
+                        <!--Unhighlighted user-->
                         <div v-else>
                             <p class="control">
-                                <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
-                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
-                </button>
+                              <button @click="getPlanners(u.user_id); selected_id=u.user_id; intro_mode=1;" class="button">
+                                <span>{{u.name}} | {{u.major}} | {{u.school}}</span>
+                              </button>
                             </p>
                         </div>
                     </div>
@@ -161,7 +160,6 @@
 
 
 [[block page_scripts]]
-<!-- Loads the index-specific js for Vue -->
 <script>
     let get_planners_url = "[[=XML(get_planners_url)]]";
     let get_shared_users_url = "[[=XML(get_shared_users_url)]]"
