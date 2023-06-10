@@ -137,13 +137,6 @@ db.define_table(
     Field("weight", type="float"),
 )
 
-# temp table, can be added to student once forced profiles can be worked out.
-db.define_table(
-    "shared_planner",
-    Field("user_id", 'reference auth_user'),
-    Field("name", type="string")
-)
-
 db.student.id.writable = False
 
 def generate_random_string(length):
